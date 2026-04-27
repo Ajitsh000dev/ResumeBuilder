@@ -6,6 +6,7 @@ import {
   GoogleAuthProvider,
   setPersistence
 } from 'firebase/auth'
+import { getFirestore } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -26,6 +27,7 @@ if (missingKeys.length > 0) {
 
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
+const db = getFirestore(app)
 const provider = new GoogleAuthProvider()
 provider.setCustomParameters({ prompt: 'select_account' })
 
@@ -42,4 +44,4 @@ if (typeof window !== 'undefined') {
     .catch(() => {})
 }
 
-export { app, auth, provider, analytics }
+export { app, auth, db, provider, analytics }
