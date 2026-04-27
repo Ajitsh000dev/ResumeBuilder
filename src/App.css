@@ -95,10 +95,56 @@
   background: #e74c3c;
 }
 
+.toolbar-btn.dark {
+  background: #2c3e50;
+}
+
 .editor-sections {
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+.email-card {
+  margin-bottom: 24px;
+  padding: 22px;
+  background: #ffffff;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+}
+
+.email-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.email-card-header h2 {
+  margin: 4px 0 0;
+  color: #203548;
+  font-size: 1.2rem;
+}
+
+.email-help {
+  margin: 0;
+  max-width: 220px;
+  color: #5f7082;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.email-body {
+  min-height: 180px;
+}
+
+.email-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
 }
 
 .preview-header {
@@ -150,6 +196,15 @@
   .preview-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .email-card-header {
+    flex-direction: column;
+  }
+
+  .email-help {
+    max-width: none;
+    text-align: left;
   }
 }
 
