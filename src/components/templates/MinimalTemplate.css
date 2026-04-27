@@ -1,0 +1,151 @@
+.minimal-template {
+  background: white;
+  padding: 48px;
+  font-family: 'Georgia', serif;
+  color: #222;
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.minimal-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.minimal-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  color: #000;
+}
+
+.contact-info-minimal {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  font-size: 11px;
+  color: #666;
+  margin-top: 8px;
+}
+
+.contact-info-minimal span {
+  border-right: 1px solid #ddd;
+  padding-right: 16px;
+}
+
+.contact-info-minimal span:last-child {
+  border-right: none;
+  padding-right: 0;
+}
+
+.minimal-summary {
+  text-align: center;
+  font-size: 12px;
+  color: #555;
+  line-height: 1.8;
+  margin-bottom: 32px;
+  font-style: italic;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.minimal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.minimal-section {
+  page-break-inside: avoid;
+}
+
+.minimal-section h2 {
+  margin: 0 0 16px 0;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  color: #000;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 8px;
+}
+
+.minimal-entry {
+  margin-bottom: 14px;
+  page-break-inside: avoid;
+}
+
+.entry-header-minimal {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.minimal-entry strong {
+  font-size: 12px;
+  color: #000;
+  font-weight: 600;
+}
+
+.date {
+  font-size: 11px;
+  color: #999;
+}
+
+.company-minimal {
+  font-size: 11px;
+  color: #666;
+  margin: 2px 0 4px 0;
+  font-style: italic;
+}
+
+.minimal-entry p {
+  margin: 4px 0 0 0;
+  font-size: 11px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.skills-list-minimal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.skill-item-minimal {
+  font-size: 11px;
+  color: #666;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  background: #f9f9f9;
+}
+
+@media (max-width: 768px) {
+  .minimal-template {
+    padding: 24px;
+  }
+
+  .minimal-header h1 {
+    font-size: 22px;
+  }
+
+  .contact-info-minimal {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .contact-info-minimal span {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .entry-header-minimal {
+    flex-direction: column;
+  }
+
+  .date {
+    margin-top: 2px;
+  }
+}
