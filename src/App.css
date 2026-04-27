@@ -1,3 +1,55 @@
+.auth-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.auth-card {
+  width: min(100%, 460px);
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.12);
+  text-align: left;
+}
+
+.auth-card h1 {
+  margin: 6px 0 12px;
+  color: #203548;
+  font-size: 2rem;
+  line-height: 1.08;
+}
+
+.auth-copy {
+  margin: 0 0 22px;
+  color: #5f7082;
+  line-height: 1.6;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  border-radius: 6px;
+  background: #2c3e50;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.auth-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.auth-error {
+  margin: 14px 0 0;
+  color: #b42318;
+  font-size: 0.92rem;
+}
+
 .app-shell {
   min-height: 100vh;
   padding: 24px;
@@ -38,6 +90,13 @@
   line-height: 1.05;
 }
 
+.panel-topline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
 .eyebrow,
 .preview-label {
   margin: 0;
@@ -54,6 +113,23 @@
   color: #5f7082;
   font-size: 0.96rem;
   line-height: 1.6;
+}
+
+.session-note {
+  margin: 10px 0 0;
+  color: #4e6478;
+  font-size: 0.9rem;
+}
+
+.signout-btn {
+  min-width: 100px;
+  padding: 10px 14px;
+  border: 1px solid rgba(44, 62, 80, 0.18);
+  border-radius: 6px;
+  background: #ffffff;
+  color: #2c3e50;
+  font-size: 0.88rem;
+  font-weight: 700;
 }
 
 .toolbar-card {
@@ -183,6 +259,11 @@
 
   .panel-intro h1 {
     font-size: 1.75rem;
+  }
+
+  .panel-topline {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .toolbar-card {

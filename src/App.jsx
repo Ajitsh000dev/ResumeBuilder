@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import './App.css'
 import PersonalInfo from './components/PersonalInfo'
 import Education from './components/Education'
@@ -8,9 +8,15 @@ import Projects from './components/Projects'
 import ResumePreview from './components/ResumePreview'
 import { prebuiltResumeData } from './data/prebuiltData'
 import { downloadAsHTML, downloadAsPDF, printResume } from './utils/downloadUtils'
+import { auth, provider } from './firebase'
+import { onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
 
 function App() {
   const [resumeData, setResumeData] = useState(prebuiltResumeData)
+  const [authUser, setAuthUser] = useState(null)
+  const [authLoading, setAuthLoading] = useState(true)
+  const [authError, setAuthError] = useState('')
+  const [signingIn, setSigningIn] = useState(false)
   const [emailTo, setEmailTo] = useState('')
   const [emailSubject, setEmailSubject] = useState('Application for .NET Developer Position')
   const [emailBody, setEmailBody] = useState(`Hello mam,
@@ -18,6 +24,15 @@ function App() {
 I hope you are doing well.
 
 I am writing to express my interest in the .NET Developer position.`)
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setAuthUser(user)
+      setAuthLoading(false)
+    })
+
+    return unsubscribe
+  }, [])
 
   const updatePersonalInfo = (data) => {
     setResumeData((prev) => ({
@@ -86,15 +101,74 @@ I am writing to express my interest in the .NET Developer position.`)
     }, 400)
   }
 
+  const handleGoogleSignIn = async () => {
+    setAuthError('')
+    setSigningIn(true)
+
+    try {
+      await signInWithPopup(auth, provider)
+    } catch (error) {
+      setAuthError(error.message || 'Unable to sign in with Google.')
+    } finally {
+      setSigningIn(false)
+    }
+  }
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth)
+    } catch (error) {
+      setAuthError(error.message || 'Unable to sign out right now.')
+    }
+  }
+
+  if (authLoading) {
+    return (
+      <div className="auth-shell">
+        <div className="auth-card">
+          <p className="eyebrow">Resume Builder</p>
+          <h1>Checking secure access</h1>
+          <p className="auth-copy">Connecting to Firebase Authentication.</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (!authUser) {
+    return (
+      <div className="auth-shell">
+        <div className="auth-card">
+          <p className="eyebrow">Secure Access</p>
+          <h1>Sign in to open your resume builder</h1>
+          <p className="auth-copy">
+            This app now uses Firebase Authentication. Sign in with Google to edit, export, and email your resume.
+          </p>
+          <button className="auth-btn" onClick={handleGoogleSignIn} disabled={signingIn}>
+            {signingIn ? 'Signing In...' : 'Continue with Google'}
+          </button>
+          {authError ? <p className="auth-error">{authError}</p> : null}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="app-shell">
       <div className="builder-layout">
         <section className="editor-panel">
           <div className="panel-intro">
-            <p className="eyebrow">Resume Builder</p>
+            <div className="panel-topline">
+              <p className="eyebrow">Resume Builder</p>
+              <button className="signout-btn" onClick={handleSignOut}>
+                Sign Out
+              </button>
+            </div>
             <h1>Update the demo resume in React</h1>
             <p className="intro-copy">
               The editor keeps the structure from <code>resumedemo.htm</code> while giving you live updates in the preview.
+            </p>
+            <p className="session-note">
+              Signed in as <strong>{authUser.displayName || authUser.email}</strong>
             </p>
           </div>
 
