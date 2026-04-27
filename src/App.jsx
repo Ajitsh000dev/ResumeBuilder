@@ -72,6 +72,7 @@ const getFriendlyAuthError = (error) => {
 }
 
 function App() {
+  const [publicView, setPublicView] = useState('welcome')
   const [resumeData, setResumeData] = useState(cloneResumeData())
   const [resumeTitle, setResumeTitle] = useState(getDefaultResumeTitle(prebuiltResumeData))
   const [previewMode, setPreviewMode] = useState('desktop')
@@ -221,6 +222,47 @@ I am writing to express my interest in the .NET Developer position.`)
     }
   }
 
+  const publicResumeData = prebuiltResumeData
+  const publicResumeTitle = getDefaultResumeTitle(publicResumeData)
+  const activeResumeData = authUser ? resumeData : publicResumeData
+  const activeResumeTitle = authUser ? resumeTitle : publicResumeTitle
+  const activeFileBaseName = (activeResumeTitle || activeResumeData.personalInfo.fullName || 'Resume').trim().replace(/\s+/g, '_')
+
+  const handlePublicDownloadHTML = () => {
+    downloadAsHTML(publicResumeData, 'demo', `${activeFileBaseName}_Resume.html`)
+  }
+
+  const handlePublicDownloadPDF = () => {
+    downloadAsPDF(publicResumeData, 'demo', `${activeFileBaseName}_Resume.pdf`)
+  }
+
+  const handlePublicPrint = () => {
+    printResume()
+  }
+
+  const handlePublicCopyEmail = async () => {
+    const toLine = emailTo ? `To: ${emailTo}\n` : ''
+    const composedEmail = `${toLine}Subject: ${emailSubject}\n\n${getEmailBodyWithAttachmentReminder()}`
+    try {
+      await navigator.clipboard.writeText(composedEmail)
+      window.alert('Email content copied.')
+    } catch (error) {
+      window.alert('Clipboard access is not available in this browser.')
+    }
+  }
+
+  const handlePublicOpenMail = () => {
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(emailTo)}&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(getEmailBodyWithAttachmentReminder())}`
+    window.open(gmailUrl, '_blank', 'noopener,noreferrer')
+  }
+
+  const handlePublicDownloadPdfAndOpenMail = () => {
+    downloadAsPDF(publicResumeData, 'demo', `${activeFileBaseName}_Resume.pdf`)
+    window.setTimeout(() => {
+      handlePublicOpenMail()
+    }, 400)
+  }
+
   const handleSignOut = async () => {
     try {
       await signOut(auth)
@@ -302,19 +344,186 @@ I am writing to express my interest in the .NET Developer position.`)
     )
   }
 
-  if (!authUser) {
+  if (!authUser && publicView === 'welcome') {
     return (
-      <div className="auth-shell">
-        <div className="auth-card">
-          <p className="eyebrow">Secure Access</p>
-          <h1>Sign in to open your resume builder</h1>
-          <p className="auth-copy">
-            This app now uses Firebase Authentication. Sign in with Google to edit, export, and email your resume.
-          </p>
-          <button className="auth-btn" onClick={handleGoogleSignIn} disabled={signingIn}>
-            {signingIn ? 'Signing In...' : 'Continue with Google'}
+      <div className="public-shell">
+        <header className="public-header">
+          <div>
+            <p className="eyebrow">Resume Builder</p>
+            <h1 className="public-brand">Build, preview, and share polished resumes</h1>
+          </div>
+          <button className="auth-btn public-login-btn" onClick={handleGoogleSignIn} disabled={signingIn}>
+            {signingIn ? 'Signing In...' : 'Login'}
           </button>
-          {authError ? <p className="auth-error">{authError}</p> : null}
+        </header>
+
+        <section className="welcome-hero">
+          <div className="welcome-copy">
+            <p className="eyebrow">Public Access</p>
+            <h2>Explore a real working demo before you sign in</h2>
+            <p className="auth-copy">
+              Open a static demo resume with working download, print, and email tools. Sign in when you want your own saved resumes and editing access.
+            </p>
+            <div className="welcome-actions">
+              <button className="toolbar-btn dark" onClick={() => setPublicView('demo')}>
+                Open Demo Resume
+              </button>
+              <button className="signout-btn" onClick={handleGoogleSignIn} disabled={signingIn}>
+                {signingIn ? 'Signing In...' : 'Login to Edit'}
+              </button>
+            </div>
+            {authError ? <p className="auth-error">{authError}</p> : null}
+          </div>
+
+          <div className="welcome-preview-card">
+            <div className="preview-window-bar">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <ResumePreview data={publicResumeData} previewMode="desktop" />
+          </div>
+        </section>
+      </div>
+    )
+  }
+
+  if (!authUser && publicView === 'demo') {
+    return (
+      <div className="app-shell">
+        <div className="builder-layout">
+          <section className="editor-panel">
+            <div className="panel-intro">
+              <div className="panel-topline">
+                <p className="eyebrow">Demo Resume</p>
+                <div className="topline-actions">
+                  <button className="signout-btn" onClick={() => setPublicView('welcome')}>
+                    Welcome Page
+                  </button>
+                  <button className="signout-btn" onClick={handleGoogleSignIn} disabled={signingIn}>
+                    {signingIn ? 'Signing In...' : 'Login'}
+                  </button>
+                </div>
+              </div>
+              <h1>Real working static demo</h1>
+              <p className="intro-copy">
+                This page is fully interactive for preview, download, print, and email. Resume content is locked until you sign in.
+              </p>
+              <p className="session-note">Editing is disabled on the public demo.</p>
+            </div>
+
+            <div className="resume-meta-card">
+              <div className="form-group">
+                <label>Resume Name</label>
+                <input type="text" value={publicResumeTitle} readOnly />
+              </div>
+            </div>
+
+            <div className="toolbar-card">
+              <button className="toolbar-btn success" onClick={handlePublicDownloadHTML}>
+                Download HTML
+              </button>
+              <button className="toolbar-btn accent" onClick={handlePublicDownloadPDF}>
+                Download PDF
+              </button>
+              <button className="toolbar-btn danger" onClick={handlePublicPrint}>
+                Print
+              </button>
+            </div>
+
+            <div className="email-card">
+              <div className="email-card-header">
+                <div>
+                  <p className="eyebrow">Quick Email Sender</p>
+                  <h2>Application message</h2>
+                </div>
+                <p className="email-help">Demo mail tools work here too. Resume content stays static.</p>
+              </div>
+
+              <div className="form-group">
+                <label>To</label>
+                <input
+                  type="email"
+                  value={emailTo}
+                  onChange={(e) => setEmailTo(e.target.value)}
+                  placeholder="hr@company.com"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Subject</label>
+                <input
+                  type="text"
+                  value={emailSubject}
+                  onChange={(e) => setEmailSubject(e.target.value)}
+                  placeholder="Application for .NET Developer Position"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Email Body</label>
+                <textarea
+                  className="email-body"
+                  value={emailBody}
+                  onChange={(e) => setEmailBody(e.target.value)}
+                  rows="8"
+                />
+              </div>
+
+              <div className="email-actions">
+                <button className="toolbar-btn accent" onClick={handlePublicCopyEmail}>
+                  Copy Email
+                </button>
+                <button className="toolbar-btn success" onClick={handlePublicOpenMail}>
+                  Open Gmail
+                </button>
+                <button className="toolbar-btn dark" onClick={handlePublicDownloadPdfAndOpenMail}>
+                  Download PDF + Gmail
+                </button>
+              </div>
+            </div>
+
+            <div className="locked-message-card">
+              <h2>Static demo content</h2>
+              <p>
+                This preview uses the real resume template and export tools, but editing controls are intentionally hidden on the public page.
+              </p>
+            </div>
+            {authError ? <p className="auth-error">{authError}</p> : null}
+          </section>
+
+          <section className="preview-panel">
+            <div className="preview-header">
+              <div>
+                <p className="preview-label">Live Preview</p>
+                <p className="preview-note">Same resume, public demo mode</p>
+              </div>
+              <div className="preview-modes" role="tablist" aria-label="Preview mode">
+                <button
+                  className={`preview-mode-btn ${previewMode === 'desktop' ? 'active' : ''}`}
+                  onClick={() => setPreviewMode('desktop')}
+                  type="button"
+                >
+                  Desktop
+                </button>
+                <button
+                  className={`preview-mode-btn ${previewMode === 'mobile' ? 'active' : ''}`}
+                  onClick={() => setPreviewMode('mobile')}
+                  type="button"
+                >
+                  Mobile
+                </button>
+              </div>
+            </div>
+            <div className={`preview-stage ${previewMode === 'mobile' ? 'mobile-stage' : 'desktop-stage'}`}>
+              <div className="preview-window-bar">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <ResumePreview data={publicResumeData} previewMode={previewMode} />
+            </div>
+          </section>
         </div>
       </div>
     )
