@@ -1,141 +1,182 @@
-.app {
+.app-shell {
   min-height: 100vh;
-  background-color: #f5f5f5;
-  padding: 20px;
+  padding: 24px;
 }
 
-.container {
+.builder-layout {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  max-width: 1400px;
+  grid-template-columns: minmax(360px, 460px) minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+  max-width: 1480px;
   margin: 0 auto;
 }
 
-.form-section {
-  background: white;
-  padding: 30px;
+.editor-panel,
+.preview-panel {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.22);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+  backdrop-filter: blur(18px);
 }
 
-.form-section h1 {
-  color: #333;
-  margin-bottom: 30px;
-  border-bottom: 2px solid #007bff;
-  padding-bottom: 10px;
+.editor-panel {
+  padding: 28px;
 }
 
-.preview-section {
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  max-height: 90vh;
-  overflow-y: auto;
+.preview-panel {
   position: sticky;
-  top: 20px;
+  top: 24px;
+  padding: 20px;
 }
 
-.print-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1em;
-  margin-top: 20px;
-  width: 100%;
+.panel-intro h1 {
+  margin: 4px 0 10px;
+  color: #203548;
+  font-size: 2.2rem;
+  line-height: 1.05;
 }
 
-.print-btn:hover {
-  background-color: #0056b3;
-  border-color: transparent;
+.eyebrow,
+.preview-label {
+  margin: 0;
+  color: #1b6ea9;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.template-selector {
-  margin-bottom: 25px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #e0e0e0;
+.intro-copy,
+.preview-note {
+  margin: 0;
+  color: #5f7082;
+  font-size: 0.96rem;
+  line-height: 1.6;
 }
 
-.template-selector label {
-  display: block;
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 12px;
-  font-size: 14px;
-}
-
-.template-buttons {
+.toolbar-card {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
+  margin: 24px 0 30px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(44, 62, 80, 0.05), rgba(52, 152, 219, 0.12));
+  border: 1px solid rgba(52, 152, 219, 0.18);
+  border-radius: 8px;
 }
 
-.template-btn {
-  flex: 1;
-  padding: 10px 16px;
-  border: 2px solid #ddd;
-  background: white;
-  color: #666;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 500;
-  transition: all 0.3s ease;
+.toolbar-btn {
+  min-width: 140px;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
 }
 
-.template-btn:hover {
-  border-color: #007bff;
-  color: #007bff;
+.toolbar-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.16);
 }
 
-.template-btn.active {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
+.toolbar-btn.success {
+  background: #27ae60;
+}
+
+.toolbar-btn.accent {
+  background: #3498db;
+}
+
+.toolbar-btn.danger {
+  background: #e74c3c;
+}
+
+.editor-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 18px;
+  padding: 6px 4px 0;
 }
 
 .resume-preview {
-  margin-top: 20px;
+  overflow-x: auto;
+  padding-bottom: 6px;
 }
 
-@media (max-width: 1024px) {
-  .container {
+@media (max-width: 1180px) {
+  .builder-layout {
     grid-template-columns: 1fr;
   }
 
-  .preview-section {
+  .preview-panel {
     position: static;
-    max-height: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .app-shell {
+    padding: 14px;
+  }
+
+  .editor-panel,
+  .preview-panel {
+    padding: 18px;
+  }
+
+  .panel-intro h1 {
+    font-size: 1.75rem;
+  }
+
+  .toolbar-card {
+    flex-direction: column;
+  }
+
+  .toolbar-btn {
+    width: 100%;
+  }
+
+  .preview-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
 @media print {
-  .app {
-    background: white;
+  .app-shell {
     padding: 0;
+    background: #ffffff;
   }
 
-  .container {
-    grid-template-columns: 1fr;
-    gap: 0;
-    max-width: 100%;
+  .builder-layout {
+    display: block;
+    max-width: none;
   }
 
-  .form-section {
+  .editor-panel {
     display: none;
   }
 
-  .preview-section {
-    box-shadow: none;
-    padding: 0;
+  .preview-panel {
     position: static;
-    max-height: none;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
 
-  .template-selector {
+  .preview-header {
     display: none;
   }
 }

@@ -4,93 +4,91 @@ import PersonalInfo from './components/PersonalInfo'
 import Education from './components/Education'
 import Experience from './components/Experience'
 import Skills from './components/Skills'
+import Projects from './components/Projects'
 import ResumePreview from './components/ResumePreview'
+import { prebuiltResumeData } from './data/prebuiltData'
+import { downloadAsHTML, downloadAsPDF, printResume } from './utils/downloadUtils'
 
 function App() {
-  const [resumeData, setResumeData] = useState({
-    personalInfo: {
-      fullName: '',
-      email: '',
-      phone: '',
-      address: '',
-      summary: ''
-    },
-    education: [],
-    experience: [],
-    skills: []
-  })
-
-  const [selectedTemplate, setSelectedTemplate] = useState('modern')
+  const [resumeData, setResumeData] = useState(prebuiltResumeData)
 
   const updatePersonalInfo = (data) => {
-    setResumeData(prev => ({
+    setResumeData((prev) => ({
       ...prev,
       personalInfo: data
     }))
   }
 
   const updateEducation = (data) => {
-    setResumeData(prev => ({
+    setResumeData((prev) => ({
       ...prev,
       education: data
     }))
   }
 
   const updateExperience = (data) => {
-    setResumeData(prev => ({
+    setResumeData((prev) => ({
       ...prev,
       experience: data
     }))
   }
 
   const updateSkills = (data) => {
-    setResumeData(prev => ({
+    setResumeData((prev) => ({
       ...prev,
       skills: data
     }))
   }
 
-  const handlePrint = () => {
-    window.print()
+  const updateProjects = (data) => {
+    setResumeData((prev) => ({
+      ...prev,
+      projects: data
+    }))
   }
 
+  const fileBaseName = resumeData.personalInfo.fullName?.trim().replace(/\s+/g, '_') || 'Resume'
+
   return (
-    <div className="app">
-      <div className="container">
-        <div className="form-section">
-          <h1>Resume Builder</h1>
-          <PersonalInfo data={resumeData.personalInfo} onUpdate={updatePersonalInfo} />
-          <Education data={resumeData.education} onUpdate={updateEducation} />
-          <Experience data={resumeData.experience} onUpdate={updateExperience} />
-          <Skills data={resumeData.skills} onUpdate={updateSkills} />
-          <button className="print-btn" onClick={handlePrint}>Print Resume</button>
-        </div>
-        <div className="preview-section">
-          <div className="template-selector">
-            <label>Template:</label>
-            <div className="template-buttons">
-              <button 
-                className={`template-btn ${selectedTemplate === 'modern' ? 'active' : ''}`}
-                onClick={() => setSelectedTemplate('modern')}
-              >
-                Modern
-              </button>
-              <button 
-                className={`template-btn ${selectedTemplate === 'minimal' ? 'active' : ''}`}
-                onClick={() => setSelectedTemplate('minimal')}
-              >
-                Minimal
-              </button>
-              <button 
-                className={`template-btn ${selectedTemplate === 'creative' ? 'active' : ''}`}
-                onClick={() => setSelectedTemplate('creative')}
-              >
-                Creative
-              </button>
-            </div>
+    <div className="app-shell">
+      <div className="builder-layout">
+        <section className="editor-panel">
+          <div className="panel-intro">
+            <p className="eyebrow">Resume Builder</p>
+            <h1>Update the demo resume in React</h1>
+            <p className="intro-copy">
+              The editor keeps the structure from <code>resumedemo.htm</code> while giving you live updates in the preview.
+            </p>
           </div>
-          <ResumePreview data={resumeData} template={selectedTemplate} />
-        </div>
+
+          <div className="toolbar-card">
+            <button className="toolbar-btn success" onClick={() => downloadAsHTML(resumeData, 'demo', `${fileBaseName}_Resume.html`)}>
+              Download HTML
+            </button>
+            <button className="toolbar-btn accent" onClick={() => downloadAsPDF(resumeData, 'demo', `${fileBaseName}_Resume.pdf`)}>
+              Download PDF
+            </button>
+            <button className="toolbar-btn danger" onClick={printResume}>
+              Print
+            </button>
+          </div>
+
+          <div className="editor-sections">
+            <PersonalInfo data={resumeData.personalInfo} onUpdate={updatePersonalInfo} />
+            <Experience data={resumeData.experience} onUpdate={updateExperience} />
+            <Projects data={resumeData.projects || []} onUpdate={updateProjects} />
+            <Education data={resumeData.education} onUpdate={updateEducation} />
+            <Skills data={resumeData.skills} onUpdate={updateSkills} />
+          </div>
+        </section>
+
+        <section className="preview-panel">
+          <div className="preview-header">
+            <p className="preview-label">Live Preview</p>
+            <p className="preview-note">Styled to match `resumedemo.htm`</p>
+          </div>
+          <ResumePreview data={resumeData} />
+        </section>
       </div>
     </div>
   )

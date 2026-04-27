@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajit Sharma - Professional Resume</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --sidebar-bg: #f8f9fa;
+            --text-color: #333;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: var(--text-color); margin: 0; padding: 20px; background: #eee; }
+        
+        .action-buttons { max-width: 950px; margin: 0 auto 20px auto; display: flex; gap: 10px; justify-content: flex-end; }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease; font-weight: bold; }
+        .btn-download { background: #27ae60; color: white; }
+        .btn-download:hover { background: #229954; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3); }
+        .btn-edit { background: var(--accent-color); color: white; }
+        .btn-edit:hover { background: #2980b9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3); }
+        .btn-print { background: #e74c3c; color: white; }
+        .btn-print:hover { background: #c0392b; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3); }
+        
+        .dropdown-menu { position: relative; display: inline-block; }
+        .dropdown-content { display: none; position: absolute; right: 0; background-color: white; min-width: 200px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); z-index: 1; border-radius: 5px; overflow: hidden; }
+        .dropdown-content a { color: black; padding: 12px 16px; text-decoration: none; display: block; }
+        .dropdown-content a:hover { background-color: var(--accent-color); color: white; }
+        .dropdown-menu:hover .dropdown-content { display: block; }
+        
+        .resume-container { max-width: 950px; margin: auto; background: #fff; display: flex; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; }
+        
+        .sidebar { background: var(--primary-color); color: white; width: 320px; padding: 40px; }
+        .sidebar h2 { border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; font-size: 1.1rem; text-transform: uppercase; margin-top: 25px; color: #ecf0f1; }
+        .sidebar p, .sidebar li { color: #bdc3c7; font-size: 0.9rem; margin-bottom: 5px; }
+        .sidebar a { color: #fff; text-decoration: none; word-break: break-all; }
+        .sidebar a:hover { text-decoration: underline; }
+
+        .main-content { padding: 40px; flex-grow: 1; }
+        .name { font-size: 2.2rem; color: var(--primary-color); margin: 0; }
+        .title { color: var(--accent-color); font-weight: bold; font-size: 1.3rem; margin-bottom: 20px; text-transform: uppercase; }
+        h3 { color: var(--primary-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 5px; margin-top: 30px; }
+        
+        .item { margin-bottom: 25px; }
+        .item-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--primary-color); }
+        .date { font-style: italic; color: #7f8c8d; font-size: 0.9rem; }
+        ul { padding-left: 20px; }
+        li { margin-bottom: 5px; }
+
+        /* Editor Styles */
+        .editor-modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); overflow: auto; }
+        .editor-modal.active { display: block; }
+        .editor-content { background-color: #fff; margin: 20px auto; padding: 30px; border-radius: 8px; width: 90%; max-width: 900px; max-height: 90vh; overflow-y: auto; }
+        .editor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid var(--accent-color); padding-bottom: 15px; }
+        .editor-header h2 { margin: 0; color: var(--primary-color); }
+        .editor-close { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 1rem; }
+        .editor-close:hover { background: #c0392b; }
+        
+        .editor-section { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #ddd; }
+        .editor-section h3 { color: var(--primary-color); margin-top: 0; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: bold; color: var(--primary-color); margin-bottom: 5px; font-size: 0.9rem; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #bbb; border-radius: 4px; font-family: inherit; font-size: 0.95rem; box-sizing: border-box; }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--accent-color); box-shadow: 0 0 5px rgba(52, 152, 219, 0.3); }
+        
+        .form-row { display: flex; gap: 15px; }
+        .form-row .form-group { flex: 1; }
+        
+        .add-btn { background: #27ae60; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .add-btn:hover { background: #229954; }
+        .remove-btn { background: #e74c3c; color: white; padding: 8px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .remove-btn:hover { background: #c0392b; }
+        
+        .item-list { background: #f8f9fa; padding: 15px; border-radius: 4px; margin-bottom: 15px; }
+        .item-list-item { background: white; padding: 15px; margin-bottom: 10px; border-left: 4px solid var(--accent-color); border-radius: 4px; }
+        .item-list-item:last-child { margin-bottom: 0; }
+        
+        .button-group { display: flex; gap: 10px; margin-top: 25px; justify-content: flex-end; }
+        .btn-save { background: #27ae60; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .btn-save:hover { background: #229954; }
+        .btn-cancel { background: #95a5a6; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+        .btn-cancel:hover { background: #7f8c8d; }
+        
+        .undo-redo-buttons { display: flex; gap: 5px; }
+        .btn-undo, .btn-redo { padding: 8px 12px; background: #95a5a6; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
+        .btn-undo:hover, .btn-redo:hover { background: #7f8c8d; }
+        .btn-undo:disabled, .btn-redo:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        @media (max-width: 768px) { .resume-container { flex-direction: column; } .sidebar { width: 100%; } .action-buttons { flex-direction: column; } .editor-content { width: 95%; margin: 10px auto; padding: 20px; } .form-row { flex-direction: column; } }
+        @media print { .action-buttons { display: none; } .editor-modal { display: none !important; } }
+    </style>
+</head>
+<body>
+
+<div class="action-buttons">
+    <div class="undo-redo-buttons">
+        <button class="btn-undo" onclick="undoEdit()" title="Undo last change">↶ Undo</button>
+        <button class="btn-redo" onclick="redoEdit()" title="Redo last change">↷ Redo</button>
+    </div>
+    <div class="dropdown-menu">
+        <button class="btn btn-download">📥 Download</button>
+        <div class="dropdown-content">
+            <a href="#" onclick="downloadHTML(event)">📄 Download as HTML</a>
+            <a href="#" onclick="downloadPDF(event)">📕 Download as PDF</a>
+        </div>
+    </div>
+    <button class="btn btn-edit" onclick="openEditor()">✏️ Edit</button>
+    <button class="btn btn-print" onclick="window.print()">🖨️ Print</button>
+</div>
+
+</div>
+
+<div id="editorModal" class="editor-modal">
+    <div class="editor-content">
+        <div class="editor-header">
+            <h2>Edit Resume</h2>
+            <button class="editor-close" onclick="closeEditor()">✕</button>
+        </div>
+        
+        <!-- Personal Info Section -->
+        <div class="editor-section">
+            <h3>👤 Personal Information</h3>
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" placeholder="Enter full name">
+            </div>
+            <div class="form-group">
+                <label>Professional Title</label>
+                <input type="text" id="professionalTitle" placeholder="e.g., Software Developer">
+            </div>
+            <div class="form-group">
+                <label>Professional Summary</label>
+                <textarea id="summary" placeholder="Enter professional summary"></textarea>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="editor-section">
+            <h3>📞 Contact Information</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="location" placeholder="City, Country - ZIP">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="phone" placeholder="+91 XXXXXXXXXX">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label>LinkedIn</label>
+                    <input type="url" id="linkedin" placeholder="https://linkedin.com/in/...">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Portfolio</label>
+                <input type="url" id="portfolio" placeholder="https://yourportfolio.com">
+            </div>
+        </div>
+
+        <!-- Skills Section -->
+        <div class="editor-section">
+            <h3>🛠️ Skills</h3>
+            <div id="skillsList" class="item-list"></div>
+            <button class="add-btn" onclick="addSkillRow()">+ Add Skill</button>
+        </div>
+
+        <!-- Work History Section -->
+        <div class="editor-section">
+            <h3>💼 Work History</h3>
+            <div id="workList" class="item-list"></div>
+            <button class="add-btn" onclick="addWorkItem()">+ Add Work Experience</button>
+        </div>
+
+        <!-- Projects Section -->
+        <div class="editor-section">
+            <h3>📁 Projects</h3>
+            <div id="projectsList" class="item-list"></div>
+            <button class="add-btn" onclick="addProject()">+ Add Project</button>
+        </div>
+
+        <!-- Education Section -->
+        <div class="editor-section">
+            <h3>🎓 Education</h3>
+            <div id="educationList" class="item-list"></div>
+            <button class="add-btn" onclick="addEducation()">+ Add Education</button>
+        </div>
+
+        <div class="button-group">
+            <button class="btn-cancel" onclick="closeEditor()">Cancel</button>
+            <button class="btn-save" onclick="saveEdits()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<div class="resume-container">
+    <aside class="sidebar">
+        <h1>Ajit Sharma</h1>
+        <p>Software Developer</p>
+        
+        <h2>Contact</h2>
+        <p>📍 Chandigarh, India - 110034</p>
+        <p>📞 +91 8968653440</p>
+        <p>✉️ <a href="mailto:ajitsh000@gmail.com">ajitsh000@gmail.com</a></p>
+        <p>🔗 <a href="https://www.linkedin.com/in/ajit-sharma-600047132">LinkedIn</a></p>
+        <p>🌐 <a href="https://ajitsh000dev.github.io/MyResume/">Portfolio</a></p>
+
+        <h2>Languages & Frameworks</h2>
+        <ul>
+            <li>C#, JavaScript, TypeScript</li>
+            <li>ASP.NET, ASP.NET Core, MVC</li>
+            <li>ASP.NET Web APIs, Razor Pages</li>
+            <li>Blazor, Angular, React.js, jQuery</li>
+        </ul>
+
+        <h2>Backend & Architecture</h2>
+        <ul>
+            <li>Microservices Architecture</li>
+            <li>RESTful API Development</li>
+        </ul>
+
+        <h2>Database & ORM</h2>
+        <ul>
+            <li>SQL Server, MySQL, MongoDB</li>
+            <li>Entity Framework Core, LINQ</li>
+        </ul>
+
+        <h2>Tools & Concepts</h2>
+        <ul>
+            <li>Git, Visual Studio, Docker</li>
+            <li>Azure, AWS, Cloud Services</li>
+            <li>Agile Methodologies</li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <h2 class="name">Ajit Sharma</h2>
+        <div class="title">Software Developer</div>
+        
+        <h3>Professional Summary</h3>
+        <p>Software Developer with 4+ years of experience in ASP.NET Core, Angular, and Microservices. Skilled in building scalable applications, REST APIs, and cloud-based deployments.</p>
+
+        <h3>Work History</h3>
+        <div class="item">
+            <div class="item-header">Software Developer, CS Soft Solutions <span>2022 - Current</span></div>
+            <ul>
+                <li>Developed scalable applications using ASP.NET Core and Angular</li>
+                <li>Worked on microservices and SSO integration (OpenID)</li>
+                <li>Deployed applications using AKS, AWS, and Azure</li>
+                <li>Improved system performance and API efficiency</li>
+            </ul>
+        </div>
+
+        <h3>Projects</h3>
+        <div class="item">
+            <strong>Restaurant Management System (Rithm Draft)</strong> | <em>Mar 2023 – Aug 2023</em>
+            <p>Designed and developed a restaurant management system for order processing and billing. Built interactive UI using Blazor and handled backend logic with C#. Managed database operations and optimized queries for performance.</p>
+            <p><strong>Tech:</strong> Blazor, C#, JavaScript, SQL Server</p>
+        </div>
+        <div class="item">
+            <strong>iPass</strong> | <em>Aug 2021 – Dec 2021</em>
+            <p>Integrated OCR functionality using Azure and AWS services. Automated document processing and validation workflows. Improved data extraction accuracy and reduced manual effort.</p>
+            <p><strong>Tech:</strong> ASP.NET Core, Azure Cognitive Services, AWS</p>
+        </div>
+        <div class="item">
+            <strong>VerimyRC</strong> | <em>Jan 2024 – Jun 2024</em>
+            <p>Developed a cross-platform application using .NET MAUI. Integrated Firebase for real-time data and authentication. Built backend services using Web API for seamless communication.</p>
+            <p><strong>Tech:</strong> .NET MAUI, Firebase, ASP.NET Core Web API</p>
+        </div>
+
+        <h3>Education</h3>
+        <p>• <strong>Software Engineering</strong>, DotnetCs Infotech (Jan 2022)</p>
+        <p>• <strong>Diploma</strong>, Chandigarh University (Jan 2016)</p>
+        <p>• <strong>12th</strong>, GMSSS (Jan 2014)</p>
+        <p>• <strong>10th</strong>, GMSSS (Jan 2012)</p>
+    </main>
+</div>
+
+<script>
+    // History for Undo/Redo
+    let editHistory = [document.documentElement.innerHTML];
+    let historyIndex = 0;
+
+    // Save initial state to localStorage
+    function saveToLocalStorage() {
+        localStorage.setItem('resumeData', document.documentElement.innerHTML);
+    }
+
+    // Load from localStorage
+    function loadFromLocalStorage() {
+        const saved = localStorage.getItem('resumeData');
+        if (saved) {
+            document.documentElement.innerHTML = saved;
+            location.reload();
+        }
+    }
+
+    function addToHistory() {
+        historyIndex++;
+        editHistory = editHistory.slice(0, historyIndex);
+        editHistory.push(document.documentElement.innerHTML);
+        updateUndoRedoButtons();
+    }
+
+    function undoEdit() {
+        if (historyIndex > 0) {
+            historyIndex--;
+            document.documentElement.innerHTML = editHistory[historyIndex];
+            updateUndoRedoButtons();
+        }
+    }
+
+    function redoEdit() {
+        if (historyIndex < editHistory.length - 1) {
+            historyIndex++;
+            document.documentElement.innerHTML = editHistory[historyIndex];
+            updateUndoRedoButtons();
+        }
+    }
+
+    function updateUndoRedoButtons() {
+        document.querySelector('.btn-undo').disabled = historyIndex <= 0;
+        document.querySelector('.btn-redo').disabled = historyIndex >= editHistory.length - 1;
+    }
+
+    function openEditor() {
+        document.getElementById('editorModal').classList.add('active');
+        populateEditorForm();
+    }
+
+    function closeEditor() {
+        document.getElementById('editorModal').classList.remove('active');
+    }
+
+    function populateEditorForm() {
+        // Personal Info
+        document.getElementById('fullName').value = document.querySelector('.name').textContent;
+        document.getElementById('professionalTitle').value = document.querySelector('.title').textContent;
+        document.getElementById('summary').value = document.querySelector('.main-content p').textContent;
+
+        // Contact Info
+        const contactInfo = Array.from(document.querySelectorAll('.sidebar > p')).slice(1, 5);
+        document.getElementById('location').value = contactInfo[0]?.textContent.replace('📍 ', '') || '';
+        document.getElementById('phone').value = contactInfo[1]?.textContent.replace('📞 ', '') || '';
+        document.getElementById('email').value = contactInfo[2]?.textContent.replace('✉️ ', '').trim() || '';
+        document.getElementById('linkedin').value = document.querySelector('a[href*="linkedin"]')?.href || '';
+        document.getElementById('portfolio').value = document.querySelector('a[href*="portfolio"], a[href*="github"]')?.href || '';
+
+        // Skills
+        populateSkillsList();
+
+        // Work History
+        populateWorkList();
+
+        // Projects
+        populateProjectsList();
+
+        // Education
+        populateEducationList();
+    }
+
+    function populateSkillsList() {
+        const skillsList = document.getElementById('skillsList');
+        skillsList.innerHTML = '';
+        const skillSections = document.querySelectorAll('.sidebar h2');
+        
+        skillSections.forEach((section, index) => {
+            const title = section.textContent;
+            const items = section.nextElementSibling;
+            if (items && items.tagName === 'UL') {
+                const listItems = items.querySelectorAll('li');
+                listItems.forEach(li => {
+                    const item = document.createElement('div');
+                    item.className = 'item-list-item';
+                    item.innerHTML = `
+                        <div class="form-group">
+                            <label>${title}</label>
+                            <input type="text" value="${li.textContent}" class="skill-input" data-category="${title}">
+                        </div>
+                        <button class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+                    `;
+                    skillsList.appendChild(item);
+                });
+            }
+        });
+    }
+
+    function populateWorkList() {
+        const workList = document.getElementById('workList');
+        workList.innerHTML = '';
+        const workItems = Array.from(document.querySelectorAll('.main-content > .item'));
+        workItems.forEach((item, index) => {
+            const header = item.querySelector('.item-header');
+            if (header && item.querySelector('ul')) {
+                const text = header.textContent;
+                const parts = text.split(/\s*(\d{4}[^0-9]*\d{4}|current)/i);
+                const position = parts[0]?.trim() || '';
+                const dates = parts[1]?.trim() || '';
+                const description = Array.from(item.querySelectorAll('li')).map(li => li.textContent).join('\n');
+                
+                const workItem = document.createElement('div');
+                workItem.className = 'item-list-item';
+                workItem.innerHTML = `
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Position</label>
+                            <input type="text" value="${position}" class="work-position">
+                        </div>
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <input type="text" value="${dates}" class="work-dates">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description (one per line)</label>
+                        <textarea class="work-description">${description}</textarea>
+                    </div>
+                    <button class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+                `;
+                workList.appendChild(workItem);
+            }
+        });
+    }
+
+    function populateProjectsList() {
+        const projectsList = document.getElementById('projectsList');
+        projectsList.innerHTML = '';
+        const allItems = document.querySelectorAll('.main-content > .item');
+        allItems.forEach((item) => {
+            if (item.querySelector('strong') && !item.querySelector('ul')) {
+                const title = item.querySelector('strong')?.textContent || '';
+                const duration = item.querySelector('em')?.textContent || '';
+                const description = item.querySelector('p:nth-of-type(1)')?.textContent || '';
+                const tech = item.querySelector('strong:last-of-type')?.nextSibling?.textContent || '';
+
+                const projectItem = document.createElement('div');
+                projectItem.className = 'item-list-item';
+                projectItem.innerHTML = `
+                    <div class="form-group">
+                        <label>Project Title</label>
+                        <input type="text" value="${title}" class="project-title">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Duration</label>
+                            <input type="text" value="${duration}" class="project-duration">
+                        </div>
+                        <div class="form-group">
+                            <label>Technologies</label>
+                            <input type="text" value="${tech.replace('Tech: ', '')}" class="project-tech">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="project-description">${description}</textarea>
+                    </div>
+                    <button class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+                `;
+                projectsList.appendChild(projectItem);
+            }
+        });
+    }
+
+    function populateEducationList() {
+        const educationList = document.getElementById('educationList');
+        educationList.innerHTML = '';
+        const eduSection = Array.from(document.querySelectorAll('h3')).find(h => h.textContent === 'Education');
+        if (eduSection) {
+            const eduContent = eduSection.nextElementSibling;
+            if (eduContent) {
+                const items = eduContent.querySelectorAll('p');
+                items.forEach(p => {
+                    const text = p.textContent;
+                    const parts = text.split(',');
+                    const eduItem = document.createElement('div');
+                    eduItem.className = 'item-list-item';
+                    eduItem.innerHTML = `
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Degree/Certification</label>
+                                <input type="text" value="${parts[0]?.trim().replace('• ', '') || ''}" class="edu-degree">
+                            </div>
+                            <div class="form-group">
+                                <label>Institution & Year</label>
+                                <input type="text" value="${parts[1]?.trim() || ''}" class="edu-institution">
+                            </div>
+                        </div>
+                        <button class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+                    `;
+                    educationList.appendChild(eduItem);
+                });
+            }
+        }
+    }
+
+    function addSkillRow() {
+        const skillsList = document.getElementById('skillsList');
+        const item = document.createElement('div');
+        item.className = 'item-list-item';
+        item.innerHTML = `
+            <div class="form-group">
+                <label>Skill</label>
+                <input type="text" class="skill-input" placeholder="e.g., JavaScript, React.js">
+            </div>
+            <button class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+        `;
+        skillsList.appendChild(item);
+    }
+
+    function addWorkItem() {
+        const workList = document.getElementById('workList');
+        const item = document.createElement('div');
+        item.className = 'item-list-item';
+        item.innerHTML = `
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Position</label>
+                    <input type="text" class="work-position" placeholder="Job title, Company">
+                </div>
+                <div class="form-group">
+                    <label>Duration</label>
+                    <input type="text" class="work-dates" placeholder="2022 - Current">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description (one per line)</label>
+                <textarea class="work-description" placeholder="Add achievements..."></textarea>
+            </div>
+            <button class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+        `;
+        workList.appendChild(item);
+    }
+
+    function addProject() {
+        const projectsList = document.getElementById('projectsList');
+        const item = document.createElement('div');
+        item.className = 'item-list-item';
+        item.innerHTML = `
+            <div class="form-group">
+                <label>Project Title</label>
+                <input type="text" class="project-title" placeholder="Project name">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Duration</label>
+                    <input type="text" class="project-duration" placeholder="Mar 2023 – Aug 2023">
+                </div>
+                <div class="form-group">
+                    <label>Technologies</label>
+                    <input type="text" class="project-tech" placeholder="Blazor, C#, SQL Server">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="project-description" placeholder="Project details..."></textarea>
+            </div>
+            <button class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+        `;
+        projectsList.appendChild(item);
+    }
+
+    function addEducation() {
+        const educationList = document.getElementById('educationList');
+        const item = document.createElement('div');
+        item.className = 'item-list-item';
+        item.innerHTML = `
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Degree/Certification</label>
+                    <input type="text" class="edu-degree" placeholder="e.g., Software Engineering">
+                </div>
+                <div class="form-group">
+                    <label>Institution & Year</label>
+                    <input type="text" class="edu-institution" placeholder="Institution (Year)">
+                </div>
+            </div>
+            <button class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+        `;
+        educationList.appendChild(item);
+    }
+
+    function saveEdits() {
+        // Update Personal Info
+        document.querySelector('.name').textContent = document.getElementById('fullName').value;
+        document.querySelector('.title').textContent = document.getElementById('professionalTitle').value;
+        document.querySelectorAll('.main-content > p')[0].textContent = document.getElementById('summary').value;
+
+        // Update Contact Info
+        const contactItems = document.querySelectorAll('.sidebar > p');
+        contactItems[1].innerHTML = '📍 ' + document.getElementById('location').value;
+        contactItems[2].innerHTML = '📞 ' + document.getElementById('phone').value;
+        
+        // Update email
+        let emailLink = document.querySelector('.sidebar a[href*="mailto"]');
+        if (!emailLink) {
+            emailLink = document.createElement('a');
+            contactItems[3].innerHTML = '✉️ ';
+            contactItems[3].appendChild(emailLink);
+        }
+        emailLink.href = 'mailto:' + document.getElementById('email').value;
+        emailLink.textContent = document.getElementById('email').value;
+
+        // Update LinkedIn and Portfolio
+        const linkedinLink = document.querySelector('a[href*="linkedin"]');
+        if (linkedinLink) linkedinLink.href = document.getElementById('linkedin').value;
+        
+        const portfolioLink = document.querySelector('a[href*="github"], a[href*="portfolio"]');
+        if (portfolioLink) portfolioLink.href = document.getElementById('portfolio').value;
+
+        // Add to history after changes
+        addToHistory();
+        saveToLocalStorage();
+        closeEditor();
+        alert('Resume updated successfully!');
+    }
+
+    // Download functions
+    function downloadHTML(event) {
+        event.preventDefault();
+        const html = document.documentElement.outerHTML;
+        const blob = new Blob([html], { type: 'text/html' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'Ajit_Sharma_Resume.html';
+        link.click();
+        URL.revokeObjectURL(link.href);
+    }
+
+    function downloadPDF(event) {
+        event.preventDefault();
+        const element = document.querySelector('.resume-container');
+        const opt = {
+            margin: 10,
+            filename: 'Ajit_Sharma_Resume.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+        };
+        
+        if (typeof html2pdf === 'undefined') {
+            alert('PDF download requires internet connection. Using print-to-PDF instead.');
+            window.print();
+        } else {
+            html2pdf().set(opt).from(element).save();
+        }
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('editorModal');
+        if (event.target === modal) {
+            closeEditor();
+        }
+    }
+
+    // Initialize undo/redo buttons
+    updateUndoRedoButtons();
+</script>
+
+</body>
+</html>

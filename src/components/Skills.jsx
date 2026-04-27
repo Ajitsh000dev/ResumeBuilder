@@ -1,12 +1,21 @@
 import React from 'react'
 import './PersonalInfo.css'
 
+const skillCategories = [
+  'Languages & Frameworks',
+  'Backend & Architecture',
+  'Database & ORM',
+  'Tools & Concepts',
+  'Additional Skills'
+]
+
 function Skills({ data, onUpdate }) {
   const addSkill = () => {
     onUpdate([
       ...data,
       {
         id: Date.now(),
+        category: 'Additional Skills',
         skill: '',
         proficiency: 'Intermediate'
       }
@@ -14,20 +23,31 @@ function Skills({ data, onUpdate }) {
   }
 
   const updateSkill = (id, field, value) => {
-    onUpdate(data.map(skill =>
-      skill.id === id ? { ...skill, [field]: value } : skill
-    ))
+    onUpdate(data.map((skill) => (skill.id === id ? { ...skill, [field]: value } : skill)))
   }
 
   const removeSkill = (id) => {
-    onUpdate(data.filter(skill => skill.id !== id))
+    onUpdate(data.filter((skill) => skill.id !== id))
   }
 
   return (
     <div className="section">
       <h2>Skills</h2>
-      {data.map(skill => (
+      {data.map((skill) => (
         <div key={skill.id} className="entry">
+          <div className="form-group">
+            <label>Category</label>
+            <select
+              value={skill.category || 'Additional Skills'}
+              onChange={(e) => updateSkill(skill.id, 'category', e.target.value)}
+            >
+              {skillCategories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className="form-group">
             <label>Skill</label>
             <input
@@ -49,10 +69,14 @@ function Skills({ data, onUpdate }) {
               <option value="Expert">Expert</option>
             </select>
           </div>
-          <button onClick={() => removeSkill(skill.id)} className="btn-remove">Remove</button>
+          <button onClick={() => removeSkill(skill.id)} className="btn-remove">
+            Remove
+          </button>
         </div>
       ))}
-      <button onClick={addSkill} className="btn-add">Add Skill</button>
+      <button onClick={addSkill} className="btn-add">
+        Add Skill
+      </button>
     </div>
   )
 }

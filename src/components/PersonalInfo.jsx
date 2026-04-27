@@ -24,6 +24,16 @@ function PersonalInfo({ data, onUpdate }) {
         />
       </div>
       <div className="form-group">
+        <label>Professional Title</label>
+        <input
+          type="text"
+          name="professionalTitle"
+          value={data.professionalTitle}
+          onChange={handleChange}
+          placeholder="e.g., Software Developer"
+        />
+      </div>
+      <div className="form-group">
         <label>Email</label>
         <input
           type="email"
@@ -51,6 +61,26 @@ function PersonalInfo({ data, onUpdate }) {
           value={data.address}
           onChange={handleChange}
           placeholder="City, State"
+        />
+      </div>
+      <div className="form-group">
+        <label>LinkedIn URL</label>
+        <input
+          type="url"
+          name="linkedin"
+          value={data.linkedin}
+          onChange={handleChange}
+          placeholder="https://linkedin.com/in/..."
+        />
+      </div>
+      <div className="form-group">
+        <label>Portfolio URL</label>
+        <input
+          type="url"
+          name="portfolio"
+          value={data.portfolio}
+          onChange={handleChange}
+          placeholder="https://yourportfolio.com"
         />
       </div>
       <div className="form-group">
