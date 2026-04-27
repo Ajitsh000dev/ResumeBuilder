@@ -74,6 +74,7 @@ const getFriendlyAuthError = (error) => {
 function App() {
   const [resumeData, setResumeData] = useState(cloneResumeData())
   const [resumeTitle, setResumeTitle] = useState(getDefaultResumeTitle(prebuiltResumeData))
+  const [previewMode, setPreviewMode] = useState('desktop')
   const [selectedResumeId, setSelectedResumeId] = useState(null)
   const [currentView, setCurrentView] = useState('dashboard')
   const [resumes, setResumes] = useState([])
@@ -500,10 +501,35 @@ I am writing to express my interest in the .NET Developer position.`)
 
         <section className="preview-panel">
           <div className="preview-header">
-            <p className="preview-label">Live Preview</p>
-            <p className="preview-note">Styled to match `resumedemo.htm`</p>
+            <div>
+              <p className="preview-label">Live Preview</p>
+              <p className="preview-note">Styled to match `resumedemo.htm`</p>
+            </div>
+            <div className="preview-modes" role="tablist" aria-label="Preview mode">
+              <button
+                className={`preview-mode-btn ${previewMode === 'desktop' ? 'active' : ''}`}
+                onClick={() => setPreviewMode('desktop')}
+                type="button"
+              >
+                Desktop
+              </button>
+              <button
+                className={`preview-mode-btn ${previewMode === 'mobile' ? 'active' : ''}`}
+                onClick={() => setPreviewMode('mobile')}
+                type="button"
+              >
+                Mobile
+              </button>
+            </div>
           </div>
-          <ResumePreview data={resumeData} />
+          <div className={`preview-stage ${previewMode === 'mobile' ? 'mobile-stage' : 'desktop-stage'}`}>
+            <div className="preview-window-bar">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+            <ResumePreview data={resumeData} previewMode={previewMode} />
+          </div>
         </section>
       </div>
     </div>

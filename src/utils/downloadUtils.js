@@ -1,3 +1,5 @@
+import html2pdf from 'html2pdf.js'
+
 const skillCategoryOrder = [
   'Languages & Frameworks',
   'Backend & Architecture',
@@ -68,14 +70,9 @@ export const downloadAsHTML = (data, template, fileName = 'Resume.html') => {
 }
 
 export const downloadAsPDF = (data, template, fileName = 'Resume.pdf') => {
-  const resumeElement = document.querySelector('.resume-preview')
+  const resumeElement = document.querySelector('.demo-resume')
   if (!resumeElement) {
     alert('Resume preview not found')
-    return
-  }
-
-  if (typeof window.html2pdf === 'undefined') {
-    window.print()
     return
   }
 
@@ -87,11 +84,84 @@ export const downloadAsPDF = (data, template, fileName = 'Resume.pdf') => {
     jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
   }
 
-  window.html2pdf().set(opt).from(resumeElement).save()
+  html2pdf().set(opt).from(resumeElement).save()
 }
 
 export const printResume = () => {
-  window.print()
+  const resumeElement = document.querySelector('.demo-resume')
+
+  if (!resumeElement) {
+    window.print()
+    return
+  }
+
+  const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
+    .map((node) => node.outerHTML)
+    .join('\n')
+
+  const iframe = document.createElement('iframe')
+  iframe.style.position = 'fixed'
+  iframe.style.right = '0'
+  iframe.style.bottom = '0'
+  iframe.style.width = '0'
+  iframe.style.height = '0'
+  iframe.style.border = '0'
+  iframe.setAttribute('aria-hidden', 'true')
+  document.body.appendChild(iframe)
+
+  const frameDocument = iframe.contentWindow?.document
+
+  if (!frameDocument || !iframe.contentWindow) {
+    iframe.remove()
+    window.print()
+    return
+  }
+
+  frameDocument.open()
+  frameDocument.write(`
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Print Resume</title>
+        ${styles}
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+            background: #ffffff;
+          }
+          .demo-resume {
+            margin: 0 auto;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            max-width: none !important;
+          }
+        </style>
+      </head>
+      <body>
+        ${resumeElement.outerHTML}
+      </body>
+    </html>
+  `)
+  frameDocument.close()
+
+  const triggerPrint = () => {
+    iframe.contentWindow?.focus()
+    iframe.contentWindow?.print()
+    window.setTimeout(() => {
+      iframe.remove()
+    }, 1000)
+  }
+
+  if (frameDocument.readyState === 'complete') {
+    window.setTimeout(triggerPrint, 150)
+  } else {
+    iframe.onload = () => {
+      window.setTimeout(triggerPrint, 150)
+    }
+  }
 }
 
 const generateHTMLContent = (data) => {
