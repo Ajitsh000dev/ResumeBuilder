@@ -190,8 +190,12 @@ const generateHTMLContent = (data) => {
           color: var(--text-color);
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+        .resume-scroll {
+          overflow-x: auto;
+        }
         .resume-container {
           max-width: 950px;
+          min-width: 950px;
           margin: 0 auto;
           display: flex;
           background: #ffffff;
@@ -292,28 +296,15 @@ const generateHTMLContent = (data) => {
         }
         @media (max-width: 768px) {
           body {
-            padding: 0;
+            padding: 12px;
             background: #ffffff;
           }
+          .resume-scroll {
+            margin: 0 -12px;
+            padding: 0 12px 12px;
+          }
           .resume-container {
-            flex-direction: column;
-            border-radius: 0;
-          }
-          .sidebar {
-            width: auto;
-          }
-          .sidebar,
-          .main-content {
-            padding: 24px;
-          }
-          .item-header,
-          .project-heading {
-            flex-direction: column;
-            gap: 4px;
-          }
-          .date,
-          .project-heading em {
-            white-space: normal;
+            border-radius: 8px;
           }
         }
         @media print {
@@ -321,7 +312,11 @@ const generateHTMLContent = (data) => {
             padding: 0;
             background: #ffffff;
           }
+          .resume-scroll {
+            overflow: visible;
+          }
           .resume-container {
+            min-width: 0;
             box-shadow: none;
             border-radius: 0;
           }
@@ -329,6 +324,7 @@ const generateHTMLContent = (data) => {
       </style>
     </head>
     <body>
+      <div class="resume-scroll">
       <div class="resume-container">
         <aside class="sidebar">
           <h1>${data.personalInfo.fullName || 'Your Name'}</h1>
@@ -423,6 +419,7 @@ const generateHTMLContent = (data) => {
             </div>
           ` : ''}
         </main>
+      </div>
       </div>
     </body>
     </html>

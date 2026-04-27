@@ -4,16 +4,10 @@ import DemoTemplate from './templates/ModernTemplate'
 function ResumePreview({ data, previewMode = 'desktop' }) {
   const viewportRef = useRef(null)
   const contentRef = useRef(null)
-  const [mobileScale, setMobileScale] = useState(1)
-  const [mobileHeight, setMobileHeight] = useState(null)
+  const [previewScale, setPreviewScale] = useState(1)
+  const [previewHeight, setPreviewHeight] = useState(null)
 
   useEffect(() => {
-    if (previewMode !== 'mobile') {
-      setMobileScale(1)
-      setMobileHeight(null)
-      return undefined
-    }
-
     const updateScale = () => {
       const viewport = viewportRef.current
       const content = contentRef.current
@@ -31,8 +25,8 @@ function ResumePreview({ data, previewMode = 'desktop' }) {
       }
 
       const nextScale = Math.min(1, availableWidth / contentWidth)
-      setMobileScale(nextScale)
-      setMobileHeight(contentHeight * nextScale)
+      setPreviewScale(nextScale)
+      setPreviewHeight(contentHeight * nextScale)
     }
 
     updateScale()
@@ -57,30 +51,34 @@ function ResumePreview({ data, previewMode = 'desktop' }) {
     }
   }, [data, previewMode])
 
+  const scaledResume = (
+    <div className={`${previewMode === 'mobile' ? 'mobile-preview-viewport' : 'desktop-preview-viewport'}`} ref={viewportRef}>
+      <div
+        className={`${previewMode === 'mobile' ? 'mobile-preview-canvas' : 'desktop-preview-canvas'}`}
+        style={previewHeight ? { height: `${previewHeight}px` } : undefined}
+      >
+        <div
+          className={`${previewMode === 'mobile' ? 'mobile-preview-content' : 'desktop-preview-content'}`}
+          ref={contentRef}
+          style={{ transform: `scale(${previewScale})` }}
+        >
+          <DemoTemplate data={data} />
+        </div>
+      </div>
+    </div>
+  )
+
   if (previewMode === 'mobile') {
     return (
       <div className="resume-preview mobile-preview">
-        <div className="mobile-preview-viewport" ref={viewportRef}>
-          <div
-            className="mobile-preview-canvas"
-            style={mobileHeight ? { height: `${mobileHeight}px` } : undefined}
-          >
-            <div
-              className="mobile-preview-content"
-              ref={contentRef}
-              style={{ transform: `scale(${mobileScale})` }}
-            >
-              <DemoTemplate data={data} />
-            </div>
-          </div>
-        </div>
+        {scaledResume}
       </div>
     )
   }
 
   return (
     <div className="resume-preview desktop-preview">
-      <DemoTemplate data={data} />
+      {scaledResume}
     </div>
   )
 }

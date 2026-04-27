@@ -151,38 +151,6 @@
   margin: 0 0 10px;
 }
 
-@media (max-width: 900px) {
-  .demo-resume {
-    flex-direction: column;
-  }
-
-  .demo-sidebar {
-    width: auto;
-  }
-}
-
-@media (max-width: 640px) {
-  .demo-sidebar,
-  .demo-main {
-    padding: 24px;
-  }
-
-  .demo-name {
-    font-size: 1.8rem;
-  }
-
-  .demo-item-header,
-  .project-heading {
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .demo-date,
-  .project-heading em {
-    white-space: normal;
-  }
-}
-
 @media print {
   .demo-resume {
     box-shadow: none;
