@@ -324,6 +324,15 @@ I am writing to express my interest in the .NET Developer position.`)
     setSaveMessage('')
   }
 
+  const panelToggleLabel = isSidePanelOpen ? 'Close edit panel' : 'Open edit panel'
+  const panelToggleIcon = (
+    <span className="hamburger-icon" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </span>
+  )
+
   const handleSaveResume = async () => {
     if (!authUser) {
       return
@@ -422,6 +431,15 @@ I am writing to express my interest in the .NET Developer position.`)
   if (!authUser && publicView === 'demo') {
     return (
       <div className="app-shell">
+        <button
+          className={`floating-drawer-toggle ${isSidePanelOpen ? 'active' : ''}`}
+          onClick={() => setIsSidePanelOpen((prev) => !prev)}
+          type="button"
+          aria-label={panelToggleLabel}
+          aria-expanded={isSidePanelOpen}
+        >
+          {panelToggleIcon}
+        </button>
         <div className={`builder-layout sliding-layout ${isSidePanelOpen ? 'panel-open' : 'panel-closed'}`}>
           <div
             className={`panel-backdrop ${isSidePanelOpen ? 'visible' : ''}`}
@@ -534,7 +552,12 @@ I am writing to express my interest in the .NET Developer position.`)
                 <p className="preview-label">Live Preview</p>
                 <p className="preview-note">Same resume, public demo mode</p>
               </div>
-              <button className="drawer-toggle" onClick={() => setIsSidePanelOpen((prev) => !prev)} type="button">
+              <button
+                className="drawer-toggle"
+                onClick={() => setIsSidePanelOpen((prev) => !prev)}
+                type="button"
+                aria-label={panelToggleLabel}
+              >
                 {isSidePanelOpen ? 'Hide Panel' : 'Show Panel'}
               </button>
               <div className="preview-modes" role="tablist" aria-label="Preview mode">
@@ -629,6 +652,15 @@ I am writing to express my interest in the .NET Developer position.`)
 
   return (
     <div className="app-shell">
+      <button
+        className={`floating-drawer-toggle ${isSidePanelOpen ? 'active' : ''}`}
+        onClick={() => setIsSidePanelOpen((prev) => !prev)}
+        type="button"
+        aria-label={panelToggleLabel}
+        aria-expanded={isSidePanelOpen}
+      >
+        {panelToggleIcon}
+      </button>
       <div className={`builder-layout sliding-layout ${isSidePanelOpen ? 'panel-open' : 'panel-closed'}`}>
         <div
           className={`panel-backdrop ${isSidePanelOpen ? 'visible' : ''}`}
@@ -758,7 +790,12 @@ I am writing to express my interest in the .NET Developer position.`)
               <p className="preview-label">Live Preview</p>
               <p className="preview-note">Styled to match `resumedemo.htm`</p>
             </div>
-            <button className="drawer-toggle" onClick={() => setIsSidePanelOpen((prev) => !prev)} type="button">
+            <button
+              className="drawer-toggle"
+              onClick={() => setIsSidePanelOpen((prev) => !prev)}
+              type="button"
+              aria-label={panelToggleLabel}
+            >
               {isSidePanelOpen ? 'Hide Panel' : 'Show Panel'}
             </button>
             <div className="preview-modes" role="tablist" aria-label="Preview mode">
