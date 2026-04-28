@@ -14,6 +14,7 @@ import {
   addDoc,
   collection,
   doc,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
@@ -83,10 +84,16 @@ const getEmailLinks = ({ to, subject, body }) => {
 }
 
 function App() {
+  const searchParams = new URLSearchParams(window.location.search)
+  const sharedUid = searchParams.get('uid')
+  const sharedResumeId = searchParams.get('resume')
+  const isSharedResumeMode = searchParams.get('shared') === '1' && Boolean(sharedUid && sharedResumeId)
+
   const [publicView, setPublicView] = useState('welcome')
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(true)
   const [resumeData, setResumeData] = useState(cloneResumeData())
   const [resumeTitle, setResumeTitle] = useState(getDefaultResumeTitle(prebuiltResumeData))
+  const [isResumePublic, setIsResumePublic] = useState(false)
   const [previewMode, setPreviewMode] = useState('desktop')
   const [selectedResumeId, setSelectedResumeId] = useState(null)
   const [currentView, setCurrentView] = useState('dashboard')
@@ -95,6 +102,10 @@ function App() {
   const [dataError, setDataError] = useState('')
   const [saveMessage, setSaveMessage] = useState('')
   const [savingResume, setSavingResume] = useState(false)
+  const [shareMessage, setShareMessage] = useState('')
+  const [sharedResumeData, setSharedResumeData] = useState(null)
+  const [sharedResumeLoading, setSharedResumeLoading] = useState(isSharedResumeMode)
+  const [sharedResumeError, setSharedResumeError] = useState('')
 
   const [authUser, setAuthUser] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
@@ -108,6 +119,46 @@ function App() {
 I hope you are doing well.
 
 I am writing to express my interest in the .NET Developer position.`)
+
+  useEffect(() => {
+    if (!isSharedResumeMode) {
+      setSharedResumeLoading(false)
+      return undefined
+    }
+
+    const loadSharedResume = async () => {
+      setSharedResumeLoading(true)
+      setSharedResumeError('')
+
+      try {
+        const sharedDoc = await getDoc(doc(db, 'users', sharedUid, 'resumes', sharedResumeId))
+
+        if (!sharedDoc.exists()) {
+          setSharedResumeError('This shared resume could not be found.')
+          return
+        }
+
+        const sharedData = sharedDoc.data()
+
+        if (!sharedData.isPublic) {
+          setSharedResumeError('This resume is not shared publicly.')
+          return
+        }
+
+        setSharedResumeData({
+          id: sharedDoc.id,
+          ...sharedData
+        })
+      } catch (error) {
+        setSharedResumeError(error.message || 'Unable to load the shared resume.')
+      } finally {
+        setSharedResumeLoading(false)
+      }
+    }
+
+    loadSharedResume()
+    return undefined
+  }, [isSharedResumeMode, sharedResumeId, sharedUid])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -189,13 +240,26 @@ I am writing to express my interest in the .NET Developer position.`)
     }))
   }
 
+  const getShareUrl = (userId, resumeId) => {
+    const url = new URL(window.location.href)
+    url.search = ''
+    url.searchParams.set('shared', '1')
+    url.searchParams.set('uid', userId)
+    url.searchParams.set('resume', resumeId)
+    return url.toString()
+  }
+
   const fileBaseName = (resumeTitle || resumeData.personalInfo.fullName || 'Resume').trim().replace(/\s+/g, '_')
   const attachmentReminder = '\n\nPlease find my resume attached as a PDF.'
+  const shareLink = authUser && selectedResumeId && isResumePublic ? getShareUrl(authUser.uid, selectedResumeId) : ''
+  const shareLinkMessage = shareLink ? `\n\nView my resume:\n${shareLink}` : ''
 
   const getEmailBodyWithAttachmentReminder = () => (
-    emailBody.includes('Please find my resume attached as a PDF.')
-      ? emailBody
-      : `${emailBody}${attachmentReminder}`
+    `${emailBody}${
+      emailBody.includes('Please find my resume attached as a PDF.') ? '' : attachmentReminder
+    }${
+      emailBody.includes('You can also view my resume here:') || !shareLinkMessage ? '' : shareLinkMessage
+    }`
   )
 
   const openEmailClient = () => {
@@ -305,7 +369,9 @@ I am writing to express my interest in the .NET Developer position.`)
     setResumeData(freshResume)
     setResumeTitle(getDefaultResumeTitle(freshResume))
     setSelectedResumeId(null)
+    setIsResumePublic(false)
     setSaveMessage('')
+    setShareMessage('')
     setCurrentView('editor')
     setIsSidePanelOpen(true)
   }
@@ -314,7 +380,9 @@ I am writing to express my interest in the .NET Developer position.`)
     setResumeData(cloneResumeData(resume.data || prebuiltResumeData))
     setResumeTitle(resume.title || getDefaultResumeTitle(resume.data || prebuiltResumeData))
     setSelectedResumeId(resume.id)
+    setIsResumePublic(Boolean(resume.isPublic))
     setSaveMessage('')
+    setShareMessage(resume.isPublic ? 'Public share link is active for this resume.' : '')
     setCurrentView('editor')
     setIsSidePanelOpen(true)
   }
@@ -344,12 +412,15 @@ I am writing to express my interest in the .NET Developer position.`)
       data: resumeData,
       ownerUid: authUser.uid,
       ownerEmail: authUser.email || '',
+      isPublic: false,
       updatedAt: serverTimestamp()
     }
 
     setSavingResume(true)
     setDataError('')
     setSaveMessage('')
+    setShareMessage('')
+    setIsResumePublic(false)
 
     try {
       if (selectedResumeId) {
@@ -370,6 +441,116 @@ I am writing to express my interest in the .NET Developer position.`)
     } finally {
       setSavingResume(false)
     }
+  }
+
+  const handleCreateShareLink = async () => {
+    if (!authUser || !selectedResumeId) {
+      setShareMessage('Save the resume first, then create a share link.')
+      return
+    }
+
+    setSavingResume(true)
+    setDataError('')
+    setShareMessage('')
+
+    const trimmedTitle = resumeTitle.trim() || getDefaultResumeTitle(resumeData)
+
+    try {
+      await updateDoc(doc(db, 'users', authUser.uid, 'resumes', selectedResumeId), {
+        title: trimmedTitle,
+        data: resumeData,
+        ownerUid: authUser.uid,
+        ownerEmail: authUser.email || '',
+        isPublic: true,
+        updatedAt: serverTimestamp()
+      })
+
+      const shareUrl = getShareUrl(authUser.uid, selectedResumeId)
+      await navigator.clipboard.writeText(shareUrl)
+      setIsResumePublic(true)
+      setShareMessage('Public resume link copied. Shared page is view-only with download and print.')
+    } catch (error) {
+      setShareMessage(error.message || 'Unable to create the share link right now.')
+    } finally {
+      setSavingResume(false)
+    }
+  }
+
+  if (isSharedResumeMode) {
+    const sharedData = sharedResumeData?.data || prebuiltResumeData
+    const sharedTitle = sharedResumeData?.title || getDefaultResumeTitle(sharedData)
+    const sharedFileBaseName = (sharedTitle || sharedData.personalInfo.fullName || 'Resume').trim().replace(/\s+/g, '_')
+
+    return (
+      <div className="app-shell shared-shell">
+        <div className="shared-layout">
+          <section className="shared-actions-panel">
+            <div className="panel-intro">
+              <p className="eyebrow">Shared Resume</p>
+              <h1>{sharedTitle}</h1>
+              <p className="intro-copy">This page is view-only. Use the actions below to download or print the resume.</p>
+            </div>
+
+            {sharedResumeLoading ? (
+              <div className="locked-message-card">
+                <h2>Loading resume</h2>
+                <p>Opening the shared resume document.</p>
+              </div>
+            ) : sharedResumeError ? (
+              <div className="locked-message-card">
+                <h2>Unable to open</h2>
+                <p>{sharedResumeError}</p>
+              </div>
+            ) : (
+              <div className="toolbar-card">
+                <button className="toolbar-btn success" onClick={() => downloadAsHTML(sharedData, 'demo', `${sharedFileBaseName}_Resume.html`)}>
+                  Download HTML
+                </button>
+                <button className="toolbar-btn accent" onClick={() => downloadAsPDF(sharedData, 'demo', `${sharedFileBaseName}_Resume.pdf`)}>
+                  Download PDF
+                </button>
+                <button className="toolbar-btn danger" onClick={printResume}>
+                  Print
+                </button>
+              </div>
+            )}
+          </section>
+
+          <section className="preview-panel">
+            <div className="preview-header">
+              <div>
+                <p className="preview-label">Resume View</p>
+                <p className="preview-note">Public share page with view, download, and print only</p>
+              </div>
+              <div className="preview-modes" role="tablist" aria-label="Preview mode">
+                <button
+                  className={`preview-mode-btn ${previewMode === 'desktop' ? 'active' : ''}`}
+                  onClick={() => setPreviewMode('desktop')}
+                  type="button"
+                >
+                  Desktop
+                </button>
+                <button
+                  className={`preview-mode-btn ${previewMode === 'mobile' ? 'active' : ''}`}
+                  onClick={() => setPreviewMode('mobile')}
+                  type="button"
+                >
+                  Mobile
+                </button>
+              </div>
+            </div>
+            <div className={`preview-stage ${previewMode === 'mobile' ? 'mobile-stage' : 'desktop-stage'}`}>
+              <div className="preview-window-bar">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              {!sharedResumeLoading && !sharedResumeError ? <ResumePreview data={sharedData} previewMode={previewMode} /> : null}
+            </div>
+          </section>
+        </div>
+      </div>
+    )
   }
 
   if (authLoading) {
@@ -552,14 +733,6 @@ I am writing to express my interest in the .NET Developer position.`)
                 <p className="preview-label">Live Preview</p>
                 <p className="preview-note">Same resume, public demo mode</p>
               </div>
-              <button
-                className="drawer-toggle"
-                onClick={() => setIsSidePanelOpen((prev) => !prev)}
-                type="button"
-                aria-label={panelToggleLabel}
-              >
-                {isSidePanelOpen ? 'Hide Panel' : 'Show Panel'}
-              </button>
               <div className="preview-modes" role="tablist" aria-label="Preview mode">
                 <button
                   className={`preview-mode-btn ${previewMode === 'desktop' ? 'active' : ''}`}
@@ -706,8 +879,12 @@ I am writing to express my interest in the .NET Developer position.`)
               <button className="toolbar-btn success" onClick={handleSaveResume} disabled={savingResume}>
                 {savingResume ? 'Saving...' : selectedResumeId ? 'Save Changes' : 'Save Resume'}
               </button>
+              <button className="toolbar-btn accent" onClick={handleCreateShareLink} disabled={savingResume}>
+                Copy Share Link
+              </button>
             </div>
             {saveMessage ? <p className="save-success">{saveMessage}</p> : null}
+            {shareMessage ? <p className="share-success">{shareMessage}</p> : null}
             {dataError ? <p className="auth-error">{dataError}</p> : null}
           </div>
 
@@ -790,14 +967,6 @@ I am writing to express my interest in the .NET Developer position.`)
               <p className="preview-label">Live Preview</p>
               <p className="preview-note">Styled to match `resumedemo.htm`</p>
             </div>
-            <button
-              className="drawer-toggle"
-              onClick={() => setIsSidePanelOpen((prev) => !prev)}
-              type="button"
-              aria-label={panelToggleLabel}
-            >
-              {isSidePanelOpen ? 'Hide Panel' : 'Show Panel'}
-            </button>
             <div className="preview-modes" role="tablist" aria-label="Preview mode">
               <button
                 className={`preview-mode-btn ${previewMode === 'desktop' ? 'active' : ''}`}
