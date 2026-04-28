@@ -1,0 +1,59 @@
+:root {
+  --primary: #4f46e5;
+  --bg: #f9fafb;
+  --card: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+}
+
+/* Base */
+.modern-wrapper {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Navbar */
+.modern-nav {
+  background: transparent;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Card */
+.modern-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: 0.2s ease;
+}
+
+.modern-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+  transform: translateY(-3px);
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--primary);
+  border: none;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+}
+
+/* Skills */
+.skill-badge {
+  background: #eef2ff;
+  color: var(--primary);
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* Typography */
+h1, h3 {
+  letter-spacing: -0.5px;
+}

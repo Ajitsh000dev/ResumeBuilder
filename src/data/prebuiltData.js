@@ -78,7 +78,8 @@ export const prebuiltResumeData = {
       duration: 'Mar 2023 - Aug 2023',
       description:
         'Designed and developed a restaurant management system for order processing and billing. Built interactive UI using Blazor and handled backend logic with C#. Managed database operations and optimized queries for performance.',
-      technologies: 'Blazor, C#, JavaScript, SQL Server'
+      technologies: 'Blazor, C#, JavaScript, SQL Server',
+      category: 'web'
     },
     {
       id: 2,
@@ -86,7 +87,8 @@ export const prebuiltResumeData = {
       duration: 'Aug 2021 - Dec 2021',
       description:
         'Integrated OCR functionality using Azure and AWS services. Automated document processing and validation workflows. Improved data extraction accuracy and reduced manual effort.',
-      technologies: 'ASP.NET Core, Azure Cognitive Services, AWS'
+      technologies: 'ASP.NET Core, Azure Cognitive Services, AWS',
+      category: 'web'
     },
     {
       id: 3,
@@ -94,7 +96,26 @@ export const prebuiltResumeData = {
       duration: 'Jan 2024 - Jun 2024',
       description:
         'Developed a cross-platform application using .NET MAUI. Integrated Firebase for real-time data and authentication. Built backend services using Web API for seamless communication.',
-      technologies: '.NET MAUI, Firebase, ASP.NET Core Web API'
+      technologies: '.NET MAUI, Firebase, ASP.NET Core Web API',
+      category: 'mobile'
+    },
+    {
+      id: 4,
+      title: 'E-Commerce Platform UI/UX',
+      duration: 'Sep 2022 - Feb 2023',
+      description:
+        'Designed and implemented user interface for a modern e-commerce platform. Created wireframes, mockups, and interactive prototypes. Conducted user research and usability testing.',
+      technologies: 'Figma, Adobe XD, Sketch, User Research',
+      category: 'design'
+    },
+    {
+      id: 5,
+      title: 'Personal Portfolio Website',
+      duration: 'Jul 2023 - Oct 2023',
+      description:
+        'Built a responsive portfolio website using React and modern CSS. Implemented smooth animations and optimized for performance across all devices.',
+      technologies: 'React, CSS3, JavaScript, Responsive Design',
+      category: 'web'
     }
   ]
 }

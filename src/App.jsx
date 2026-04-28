@@ -6,6 +6,7 @@ import Experience from './components/Experience'
 import Skills from './components/Skills'
 import Projects from './components/Projects'
 import ResumePreview from './components/ResumePreview'
+import PortfolioPage from './PortfolioPage'
 import { prebuiltResumeData } from './data/prebuiltData'
 import { downloadAsHTML, downloadAsPDF, printResume } from './utils/downloadUtils'
 import { auth, db, provider } from './firebase'
@@ -15,6 +16,8 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
+  limit,
   onSnapshot,
   orderBy,
   query,
@@ -87,7 +90,8 @@ function App() {
   const searchParams = new URLSearchParams(window.location.search)
   const sharedUid = searchParams.get('uid')
   const sharedResumeId = searchParams.get('resume')
-  const isSharedResumeMode = searchParams.get('shared') === '1' && Boolean(sharedUid && sharedResumeId)
+  const isSharedPortfolioMode = searchParams.get('shared') === '1' && searchParams.get('portfolio') === '1' && Boolean(sharedUid)
+  const isSharedResumeMode = searchParams.get('shared') === '1' && Boolean(sharedUid && sharedResumeId) && !isSharedPortfolioMode
 
   const [publicView, setPublicView] = useState('welcome')
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(true)
@@ -107,6 +111,9 @@ function App() {
   const [sharedResumeData, setSharedResumeData] = useState(null)
   const [sharedResumeLoading, setSharedResumeLoading] = useState(isSharedResumeMode)
   const [sharedResumeError, setSharedResumeError] = useState('')
+  const [sharedPortfolioData, setSharedPortfolioData] = useState(null)
+  const [sharedPortfolioLoading, setSharedPortfolioLoading] = useState(isSharedPortfolioMode)
+  const [sharedPortfolioError, setSharedPortfolioError] = useState('')
 
   const [authUser, setAuthUser] = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
@@ -160,6 +167,54 @@ I am writing to express my interest in the .NET Developer position.`)
     loadSharedResume()
     return undefined
   }, [isSharedResumeMode, sharedResumeId, sharedUid])
+
+  useEffect(() => {
+    if (!isSharedPortfolioMode) {
+      setSharedPortfolioLoading(false)
+      return undefined
+    }
+
+    const loadSharedPortfolio = async () => {
+      setSharedPortfolioLoading(true)
+      setSharedPortfolioError('')
+
+      try {
+        // For portfolio sharing, load the user's most recent public resume
+        const userResumesQuery = query(
+          collection(db, 'users', sharedUid, 'resumes'),
+          orderBy('updatedAt', 'desc'),
+          limit(1)
+        )
+        
+        const snapshot = await getDocs(userResumesQuery)
+        
+        if (snapshot.empty) {
+          setSharedPortfolioError('No public portfolio data found for this user.')
+          return
+        }
+
+        const portfolioDoc = snapshot.docs[0]
+        const portfolioData = portfolioDoc.data()
+
+        if (!portfolioData.isPublic) {
+          setSharedPortfolioError('This portfolio is not shared publicly.')
+          return
+        }
+
+        setSharedPortfolioData({
+          id: portfolioDoc.id,
+          ...portfolioData
+        })
+      } catch (error) {
+        setSharedPortfolioError(error.message || 'Unable to load the shared portfolio.')
+      } finally {
+        setSharedPortfolioLoading(false)
+      }
+    }
+
+    loadSharedPortfolio()
+    return undefined
+  }, [isSharedPortfolioMode, sharedUid])
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -247,6 +302,15 @@ I am writing to express my interest in the .NET Developer position.`)
     url.searchParams.set('shared', '1')
     url.searchParams.set('uid', userId)
     url.searchParams.set('resume', resumeId)
+    return url.toString()
+  }
+
+  const getPortfolioShareUrl = (userId) => {
+    const url = new URL(window.location.href)
+    url.search = ''
+    url.searchParams.set('shared', '1')
+    url.searchParams.set('uid', userId)
+    url.searchParams.set('portfolio', '1')
     return url.toString()
   }
 
@@ -418,6 +482,10 @@ I am writing to express my interest in the ${resume.data?.personalInfo?.professi
     setSaveMessage('')
   }
 
+  const handleOpenPortfolioPage = () => {
+    setCurrentView('portfolio')
+  }
+
   const panelToggleLabel = isSidePanelOpen ? 'Close edit panel' : 'Open edit panel'
   const panelToggleIcon = (
     <span className="hamburger-icon" aria-hidden="true">
@@ -504,6 +572,51 @@ I am writing to express my interest in the ${resume.data?.personalInfo?.professi
     }
   }
 
+  const handleCreatePortfolioShareLink = async () => {
+    if (!authUser) {
+      setShareMessage('You must be signed in to share your portfolio.')
+      return
+    }
+
+    setSavingResume(true)
+    setDataError('')
+    setShareMessage('')
+
+    try {
+      // Get the user's most recent resume to make it public for portfolio sharing
+      const userResumesQuery = query(
+        collection(db, 'users', authUser.uid, 'resumes'),
+        orderBy('updatedAt', 'desc'),
+        limit(1)
+      )
+      
+      const snapshot = await getDocs(userResumesQuery)
+      
+      if (snapshot.empty) {
+        setShareMessage('Create and save a resume first, then share your portfolio.')
+        return
+      }
+
+      const resumeDoc = snapshot.docs[0]
+      const resumeData = resumeDoc.data()
+
+      // Make sure the resume is public
+      await updateDoc(doc(db, 'users', authUser.uid, 'resumes', resumeDoc.id), {
+        ...resumeData,
+        isPublic: true,
+        updatedAt: serverTimestamp()
+      })
+
+      const portfolioShareUrl = getPortfolioShareUrl(authUser.uid)
+      await navigator.clipboard.writeText(portfolioShareUrl)
+      setShareMessage('Public portfolio link copied. Anyone with the link can view your portfolio.')
+    } catch (error) {
+      setShareMessage(error.message || 'Unable to create the portfolio share link right now.')
+    } finally {
+      setSavingResume(false)
+    }
+  }
+
   if (isSharedResumeMode) {
     const sharedData = sharedResumeData?.data || prebuiltResumeData
     const sharedTitle = sharedResumeData?.title || getDefaultResumeTitle(sharedData)
@@ -577,6 +690,30 @@ I am writing to express my interest in the ${resume.data?.personalInfo?.professi
             </div>
           </section>
         </div>
+      </div>
+    )
+  }
+
+  if (isSharedPortfolioMode) {
+    const sharedData = sharedPortfolioData?.data || prebuiltResumeData
+    const sharedTitle = sharedPortfolioData?.title || getDefaultResumeTitle(sharedData)
+    const sharedFileBaseName = (sharedTitle || sharedData.personalInfo.fullName || 'Portfolio').trim().replace(/\s+/g, '_')
+
+    return (
+      <div className="portfolio-shell">
+        {sharedPortfolioLoading ? (
+          <div className="loading-state">
+            <h2>Loading portfolio</h2>
+            <p>Opening the shared portfolio.</p>
+          </div>
+        ) : sharedPortfolioError ? (
+          <div className="error-state">
+            <h2>Unable to open portfolio</h2>
+            <p>{sharedPortfolioError}</p>
+          </div>
+        ) : (
+          <PortfolioPage data={sharedData} isShared={true} />
+        )}
       </div>
     )
   }
@@ -851,6 +988,12 @@ I am writing to express my interest in the ${resume.data?.personalInfo?.professi
     )
   }
 
+  if (currentView === 'portfolio') {
+    return (
+      <PortfolioPage data={activeResumeData} onBack={handleBackToDashboard} onShare={handleCreatePortfolioShareLink} isShared={false} />
+    )
+  }
+
   return (
     <div className="app-shell">
       <button
@@ -873,6 +1016,9 @@ I am writing to express my interest in the ${resume.data?.personalInfo?.professi
             <div className="panel-topline">
               <p className="eyebrow">Resume Builder</p>
               <div className="topline-actions">
+                <button className="signout-btn" onClick={handleOpenPortfolioPage}>
+                  Open Portfolio Page
+                </button>
                 <button className="signout-btn" onClick={handleBackToDashboard}>
                   All Resumes
                 </button>

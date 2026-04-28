@@ -1,5 +1,4 @@
 import React from 'react'
-import './PersonalInfo.css'
 
 function PersonalInfo({ data, onUpdate }) {
   const handleChange = (e) => {
@@ -11,87 +10,99 @@ function PersonalInfo({ data, onUpdate }) {
   }
 
   return (
-    <div className="section">
-      <h2>Personal Information</h2>
-      <div className="form-group">
-        <label>Full Name</label>
-        <input
-          type="text"
-          name="fullName"
-          value={data.fullName}
-          onChange={handleChange}
-          placeholder="John Doe"
-        />
-      </div>
-      <div className="form-group">
-        <label>Professional Title</label>
-        <input
-          type="text"
-          name="professionalTitle"
-          value={data.professionalTitle}
-          onChange={handleChange}
-          placeholder="e.g., Software Developer"
-        />
-      </div>
-      <div className="form-group">
-        <label>Email</label>
-        <input
-          type="email"
-          name="email"
-          value={data.email}
-          onChange={handleChange}
-          placeholder="john@example.com"
-        />
-      </div>
-      <div className="form-group">
-        <label>Phone</label>
-        <input
-          type="tel"
-          name="phone"
-          value={data.phone}
-          onChange={handleChange}
-          placeholder="+1 (555) 123-4567"
-        />
-      </div>
-      <div className="form-group">
-        <label>Address</label>
-        <input
-          type="text"
-          name="address"
-          value={data.address}
-          onChange={handleChange}
-          placeholder="City, State"
-        />
-      </div>
-      <div className="form-group">
-        <label>LinkedIn URL</label>
-        <input
-          type="url"
-          name="linkedin"
-          value={data.linkedin}
-          onChange={handleChange}
-          placeholder="https://linkedin.com/in/..."
-        />
-      </div>
-      <div className="form-group">
-        <label>Portfolio URL</label>
-        <input
-          type="url"
-          name="portfolio"
-          value={data.portfolio}
-          onChange={handleChange}
-          placeholder="https://yourportfolio.com"
-        />
-      </div>
-      <div className="form-group">
-        <label>Professional Summary</label>
-        <textarea
-          name="summary"
-          value={data.summary}
-          onChange={handleChange}
-          placeholder="Write a brief summary about yourself..."
-          rows="4"
-        />
+    <div className="card border-0 shadow-sm mb-4">
+      <div className="card-body">
+        <h2 className="h5 mb-4">Personal Information</h2>
+        <div className="row g-3">
+          <div className="col-12 col-md-6">
+            <label className="form-label">Full Name</label>
+            <input
+              className="form-control"
+              type="text"
+              name="fullName"
+              value={data.fullName}
+              onChange={handleChange}
+              placeholder="John Doe"
+            />
+          </div>
+          <div className="col-12 col-md-6">
+            <label className="form-label">Professional Title</label>
+            <input
+              className="form-control"
+              type="text"
+              name="professionalTitle"
+              value={data.professionalTitle}
+              onChange={handleChange}
+              placeholder="e.g., Software Developer"
+            />
+          </div>
+          <div className="col-12 col-md-6">
+            <label className="form-label">Email</label>
+            <input
+              className="form-control"
+              type="email"
+              name="email"
+              value={data.email}
+              onChange={handleChange}
+              placeholder="john@example.com"
+            />
+          </div>
+          <div className="col-12 col-md-6">
+            <label className="form-label">Phone</label>
+            <input
+              className="form-control"
+              type="tel"
+              name="phone"
+              value={data.phone}
+              onChange={handleChange}
+              placeholder="+1 (555) 123-4567"
+            />
+          </div>
+          <div className="col-12 col-md-6">
+            <label className="form-label">Address</label>
+            <input
+              className="form-control"
+              type="text"
+              name="address"
+              value={data.address}
+              onChange={handleChange}
+              placeholder="City, State"
+            />
+          </div>
+          <div className="col-12 col-md-6">
+            <label className="form-label">LinkedIn URL</label>
+            <input
+              className="form-control"
+              type="url"
+              name="linkedin"
+              value={data.linkedin}
+              onChange={handleChange}
+              placeholder="https://linkedin.com/in/..."
+            />
+          </div>
+          <div className="col-12">
+            <label className="form-label">Portfolio URL</label>
+            <input
+              className="form-control"
+              type="url"
+              name="portfolio"
+              value={data.portfolio}
+              onChange={handleChange}
+              placeholder="https://yourportfolio.com"
+            />
+          </div>
+          <div className="col-12">
+            <label className="form-label">Professional Summary</label>
+            <textarea
+              className="form-control"
+              name="summary"
+              value={data.summary}
+              onChange={handleChange}
+              placeholder="Write a brief summary about yourself..."
+              rows="4"
+            />
+          </div>
+        </div>
       </div>
     </div>
   )
