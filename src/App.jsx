@@ -78,8 +78,6 @@ const getEmailLinks = ({ to, subject, body }) => {
 
   return {
     gmailWeb: `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedTo}&su=${encodedSubject}&body=${encodedBody}`,
-    gmailIos: `googlegmail:///co?to=${encodedTo}&subject=${encodedSubject}&body=${encodedBody}`,
-    gmailAndroid: `intent://co?to=${encodedTo}&subject=${encodedSubject}&body=${encodedBody}#Intent;scheme=googlegmail;package=com.google.android.gm;end`,
     mailto: `mailto:${encodedTo}?subject=${encodedSubject}&body=${encodedBody}`
   }
 }
@@ -208,26 +206,10 @@ I am writing to express my interest in the .NET Developer position.`)
     })
 
     const userAgent = navigator.userAgent || navigator.vendor || ''
-    const isAndroid = /Android/i.test(userAgent)
-    const isIOS = /iPhone|iPad|iPod/i.test(userAgent)
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(userAgent)
 
-    if (isAndroid) {
-      window.location.href = links.gmailAndroid
-      window.setTimeout(() => {
-        if (!document.hidden) {
-          window.location.href = links.mailto
-        }
-      }, 900)
-      return
-    }
-
-    if (isIOS) {
-      window.location.href = links.gmailIos
-      window.setTimeout(() => {
-        if (!document.hidden) {
-          window.location.href = links.mailto
-        }
-      }, 900)
+    if (isMobile) {
+      window.location.href = links.mailto
       return
     }
 
