@@ -380,6 +380,17 @@ I am writing to express my interest in the .NET Developer position.`)
     setShareMessage('')
     setCurrentView('editor')
     setIsSidePanelOpen(true)
+
+    // Set default email subject and body for new resume
+    const fullName = freshResume.personalInfo?.fullName || 'Your Name'
+    const professionalTitle = freshResume.personalInfo?.professionalTitle || 'Professional'
+
+    setEmailSubject(`Application for ${professionalTitle} Position - ${fullName}`)
+    setEmailBody(`Hello,
+
+I hope you are doing well.
+
+I am writing to express my interest in the ${professionalTitle} position.`)
   }
 
   const handleOpenResume = (resume) => {
@@ -391,6 +402,14 @@ I am writing to express my interest in the .NET Developer position.`)
     setShareMessage(resume.isPublic ? 'Public share link is active for this resume.' : '')
     setCurrentView('editor')
     setIsSidePanelOpen(true)
+
+    // Load saved email subject and body, or use defaults
+    setEmailSubject(resume.emailSubject || `Application for ${resume.data?.personalInfo?.professionalTitle || 'Professional'} Position - ${resume.data?.personalInfo?.fullName || 'Your Name'}`)
+    setEmailBody(resume.emailBody || `Hello,
+
+I hope you are doing well.
+
+I am writing to express my interest in the ${resume.data?.personalInfo?.professionalTitle || 'Professional'} position.`)
   }
 
   const handleBackToDashboard = () => {
@@ -416,6 +435,8 @@ I am writing to express my interest in the .NET Developer position.`)
     const payload = {
       title: trimmedTitle,
       data: resumeData,
+      emailSubject: emailSubject,
+      emailBody: emailBody,
       ownerUid: authUser.uid,
       ownerEmail: authUser.email || '',
       isPublic: false,
