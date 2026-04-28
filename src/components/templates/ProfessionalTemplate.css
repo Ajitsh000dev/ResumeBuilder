@@ -1,0 +1,165 @@
+/* Professional Template Styles */
+.professional-resume {
+  font-family: 'Georgia', serif;
+  max-width: 210mm;
+  margin: 0 auto;
+  background: #ffffff;
+  color: #333;
+  line-height: 1.6;
+}
+
+.professional-header {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+  color: white;
+  padding: 40px 30px;
+  text-align: center;
+}
+
+.header-content h1 {
+  margin: 0 0 10px 0;
+  font-size: 2.5em;
+  font-weight: normal;
+}
+
+.professional-title {
+  margin: 0 0 20px 0;
+  font-size: 1.2em;
+  opacity: 0.9;
+}
+
+.contact-info {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 0.9em;
+}
+
+.professional-content {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 30px;
+  padding: 30px;
+}
+
+.professional-sidebar {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.sidebar-section {
+  margin-bottom: 25px;
+}
+
+.sidebar-section h3 {
+  color: #2c3e50;
+  font-size: 1.1em;
+  margin: 0 0 10px 0;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 5px;
+}
+
+.sidebar-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-section li {
+  padding: 3px 0;
+  font-size: 0.9em;
+}
+
+.sidebar-section a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+.sidebar-section a:hover {
+  text-decoration: underline;
+}
+
+.professional-main {
+  padding-left: 20px;
+}
+
+.main-section {
+  margin-bottom: 30px;
+}
+
+.main-section h2 {
+  color: #2c3e50;
+  font-size: 1.4em;
+  margin: 0 0 15px 0;
+  border-bottom: 2px solid #3498db;
+  padding-bottom: 8px;
+}
+
+.experience-item,
+.project-item,
+.education-item {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 5px;
+}
+
+.item-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.1em;
+}
+
+.date {
+  color: #7f8c8d;
+  font-size: 0.9em;
+  font-weight: normal;
+}
+
+.company,
+.school {
+  color: #3498db;
+  font-weight: bold;
+  margin: 5px 0 10px 0;
+}
+
+.duration {
+  color: #7f8c8d;
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+.technologies {
+  color: #555;
+  font-size: 0.9em;
+  margin-top: 8px;
+}
+
+.professional-main ul {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.professional-main li {
+  margin-bottom: 5px;
+  font-size: 0.95em;
+}
+
+/* Print styles */
+@media print {
+  .professional-resume {
+    box-shadow: none;
+    margin: 0;
+  }
+
+  .professional-content {
+    padding: 20px;
+  }
+}

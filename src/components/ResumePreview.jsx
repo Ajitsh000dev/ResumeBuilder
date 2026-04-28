@@ -1,11 +1,33 @@
 import React, { useEffect, useRef, useState } from 'react'
-import DemoTemplate from './templates/ModernTemplate'
+import ModernTemplate from './templates/ModernTemplate'
+import MinimalTemplate from './templates/MinimalTemplate'
+import CreativeTemplate from './templates/CreativeTemplate'
+import ProfessionalTemplate from './templates/ProfessionalTemplate'
+import ElegantTemplate from './templates/ElegantTemplate'
 
-function ResumePreview({ data, previewMode = 'desktop' }) {
+function ResumePreview({ data, previewMode = 'desktop', template = 'modern' }) {
   const viewportRef = useRef(null)
   const contentRef = useRef(null)
   const [previewScale, setPreviewScale] = useState(1)
   const [previewHeight, setPreviewHeight] = useState(null)
+
+  const getTemplateComponent = () => {
+    switch (template) {
+      case 'minimal':
+        return MinimalTemplate
+      case 'creative':
+        return CreativeTemplate
+      case 'professional':
+        return ProfessionalTemplate
+      case 'elegant':
+        return ElegantTemplate
+      case 'modern':
+      default:
+        return ModernTemplate
+    }
+  }
+
+  const TemplateComponent = getTemplateComponent()
 
   useEffect(() => {
     const updateScale = () => {
@@ -62,7 +84,7 @@ function ResumePreview({ data, previewMode = 'desktop' }) {
           ref={contentRef}
           style={{ transform: `scale(${previewScale})` }}
         >
-          <DemoTemplate data={data} />
+          <TemplateComponent data={data} />
         </div>
       </div>
     </div>

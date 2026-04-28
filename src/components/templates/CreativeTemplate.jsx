@@ -1,9 +1,68 @@
 import React from 'react'
 import './CreativeTemplate.css'
 
+const skillCategoryOrder = [
+  'Languages & Frameworks',
+  'Backend & Architecture',
+  'Database & ORM',
+  'Tools & Concepts'
+]
+
+const formatMonth = (value) => {
+  if (!value) {
+    return ''
+  }
+
+  const [year, month] = value.split('-')
+  if (!year || !month) {
+    return value
+  }
+
+  const date = new Date(Number(year), Number(month) - 1, 1)
+  return new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric' }).format(date)
+}
+
+const formatRange = (startDate, endDate) => {
+  const start = formatMonth(startDate)
+  const end = endDate ? formatMonth(endDate) : 'Current'
+
+  if (!start && !endDate) {
+    return ''
+  }
+
+  if (!start) {
+    return end
+  }
+
+  return `${start} - ${end}`
+}
+
+const groupSkills = (skills) => {
+  const groups = skills.reduce((acc, skill) => {
+    const category = skill.category || 'Additional Skills'
+    if (!acc[category]) {
+      acc[category] = []
+    }
+    if (skill.skill?.trim()) {
+      acc[category].push(skill.skill.trim())
+    }
+    return acc
+  }, {})
+
+  const orderedKeys = [
+    ...skillCategoryOrder.filter((category) => groups[category]?.length),
+    ...Object.keys(groups).filter((category) => !skillCategoryOrder.includes(category))
+  ]
+
+  return orderedKeys.map((category) => ({
+    category,
+    items: groups[category]
+  }))
+}
+
 function CreativeTemplate({ data }) {
   return (
-    <div className="creative-template">
+    <div className="creative-template demo-resume">
       <div className="creative-sidebar">
         <div className="creative-header">
           <h1>{data.personalInfo.fullName || 'Your Name'}</h1>
@@ -35,7 +94,7 @@ function CreativeTemplate({ data }) {
         </section>
 
         {/* Skills in Sidebar */}
-        {data.skills.length > 0 && (
+        {data.skills?.length > 0 && (
           <section className="creative-section">
             <h3>Skills</h3>
             {data.skills.map(skill => (
@@ -60,7 +119,7 @@ function CreativeTemplate({ data }) {
         )}
 
         {/* Experience */}
-        {data.experience.length > 0 && (
+        {data.experience?.length > 0 && (
           <section className="creative-section">
             <h2>Experience</h2>
             {data.experience.map((exp, idx) => (
@@ -78,7 +137,7 @@ function CreativeTemplate({ data }) {
         )}
 
         {/* Education */}
-        {data.education.length > 0 && (
+        {data.education?.length > 0 && (
           <section className="creative-section">
             <h2>Education</h2>
             {data.education.map(edu => (

@@ -164,7 +164,7 @@ export const printResume = () => {
   }
 }
 
-const generateHTMLContent = (data) => {
+const generateHTMLContent = (data, template = 'modern') => {
   const skillGroups = groupSkills(data.skills)
 
   return `

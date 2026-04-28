@@ -95,6 +95,7 @@ function App() {
   const [resumeTitle, setResumeTitle] = useState(getDefaultResumeTitle(prebuiltResumeData))
   const [isResumePublic, setIsResumePublic] = useState(false)
   const [previewMode, setPreviewMode] = useState('desktop')
+  const [selectedTemplate, setSelectedTemplate] = useState('modern')
   const [selectedResumeId, setSelectedResumeId] = useState(null)
   const [currentView, setCurrentView] = useState('dashboard')
   const [resumes, setResumes] = useState([])
@@ -916,10 +917,10 @@ I am writing to express my interest in the ${resume.data?.personalInfo?.professi
           </div>
 
           <div className="toolbar-card">
-            <button className="toolbar-btn success" onClick={() => downloadAsHTML(resumeData, 'demo', `${fileBaseName}_Resume.html`)}>
+            <button className="toolbar-btn success" onClick={() => downloadAsHTML(resumeData, selectedTemplate, `${fileBaseName}_Resume.html`)}>
               Download HTML
             </button>
-            <button className="toolbar-btn accent" onClick={() => downloadAsPDF(resumeData, 'demo', `${fileBaseName}_Resume.pdf`)}>
+            <button className="toolbar-btn accent" onClick={() => downloadAsPDF(resumeData, selectedTemplate, `${fileBaseName}_Resume.pdf`)}>
               Download PDF
             </button>
             <button className="toolbar-btn danger" onClick={printResume}>
@@ -994,21 +995,38 @@ I am writing to express my interest in the ${resume.data?.personalInfo?.professi
               <p className="preview-label">Live Preview</p>
               <p className="preview-note">Styled to match `resumedemo.htm`</p>
             </div>
-            <div className="preview-modes" role="tablist" aria-label="Preview mode">
-              <button
-                className={`preview-mode-btn ${previewMode === 'desktop' ? 'active' : ''}`}
-                onClick={() => setPreviewMode('desktop')}
-                type="button"
-              >
-                Desktop
-              </button>
-              <button
-                className={`preview-mode-btn ${previewMode === 'mobile' ? 'active' : ''}`}
-                onClick={() => setPreviewMode('mobile')}
-                type="button"
-              >
-                Mobile
-              </button>
+            <div className="preview-controls">
+              <div className="template-selector">
+                <label htmlFor="template-select">Template:</label>
+                <select
+                  id="template-select"
+                  value={selectedTemplate}
+                  onChange={(e) => setSelectedTemplate(e.target.value)}
+                  className="template-select"
+                >
+                  <option value="modern">Modern</option>
+                  <option value="minimal">Minimal</option>
+                  <option value="creative">Creative</option>
+                  <option value="professional">Professional</option>
+                  <option value="elegant">Elegant</option>
+                </select>
+              </div>
+              <div className="preview-modes" role="tablist" aria-label="Preview mode">
+                <button
+                  className={`preview-mode-btn ${previewMode === 'desktop' ? 'active' : ''}`}
+                  onClick={() => setPreviewMode('desktop')}
+                  type="button"
+                >
+                  Desktop
+                </button>
+                <button
+                  className={`preview-mode-btn ${previewMode === 'mobile' ? 'active' : ''}`}
+                  onClick={() => setPreviewMode('mobile')}
+                  type="button"
+                >
+                  Mobile
+                </button>
+              </div>
             </div>
           </div>
           <div className={`preview-stage ${previewMode === 'mobile' ? 'mobile-stage' : 'desktop-stage'}`}>
@@ -1017,7 +1035,7 @@ I am writing to express my interest in the ${resume.data?.personalInfo?.professi
               <span></span>
               <span></span>
             </div>
-            <ResumePreview data={resumeData} previewMode={previewMode} />
+            <ResumePreview data={resumeData} previewMode={previewMode} template={selectedTemplate} />
           </div>
         </section>
       </div>
