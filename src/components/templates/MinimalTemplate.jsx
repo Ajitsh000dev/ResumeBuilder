@@ -45,7 +45,7 @@ function MinimalTemplate({ data }) {
               <div key={edu.id} className="minimal-entry">
                 <div className="entry-header-minimal">
                   <strong>{edu.degree} in {edu.field}</strong>
-                  <span className="date">{edu.startDate} - {edu.endDate}</span>
+                  <span className="date">{formatRange(edu.startDate, edu.endDate)}</span>
                 </div>
                 <div className="company-minimal">{edu.school}</div>
               </div>

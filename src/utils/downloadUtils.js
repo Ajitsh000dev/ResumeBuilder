@@ -411,7 +411,7 @@ const generateHTMLContent = (data) => {
                     <p>
                       <strong>${education.field || education.degree}</strong>
                       ${education.school ? `, ${education.school}` : ''}
-                      ${education.endDate ? ` (${formatMonth(education.endDate)})` : education.startDate ? ` (${formatMonth(education.startDate)})` : ''}
+                      ${(education.startDate || education.endDate) ? ` (${formatRange(education.startDate, education.endDate)})` : ''}
                     </p>
                   `
                 )

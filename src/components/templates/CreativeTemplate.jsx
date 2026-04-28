@@ -87,7 +87,7 @@ function CreativeTemplate({ data }) {
                 <div className="timeline-content">
                   <h3>{edu.degree} in {edu.field}</h3>
                   <p className="company">{edu.school}</p>
-                  <p className="date">{edu.startDate} - {edu.endDate}</p>
+                  <p className="date">{formatRange(edu.startDate, edu.endDate)}</p>
                 </div>
               </div>
             ))}
