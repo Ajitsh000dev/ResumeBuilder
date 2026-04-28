@@ -84,6 +84,7 @@ const getEmailLinks = ({ to, subject, body }) => {
 
 function App() {
   const [publicView, setPublicView] = useState('welcome')
+  const [isSidePanelOpen, setIsSidePanelOpen] = useState(true)
   const [resumeData, setResumeData] = useState(cloneResumeData())
   const [resumeTitle, setResumeTitle] = useState(getDefaultResumeTitle(prebuiltResumeData))
   const [previewMode, setPreviewMode] = useState('desktop')
@@ -306,6 +307,7 @@ I am writing to express my interest in the .NET Developer position.`)
     setSelectedResumeId(null)
     setSaveMessage('')
     setCurrentView('editor')
+    setIsSidePanelOpen(true)
   }
 
   const handleOpenResume = (resume) => {
@@ -314,6 +316,7 @@ I am writing to express my interest in the .NET Developer position.`)
     setSelectedResumeId(resume.id)
     setSaveMessage('')
     setCurrentView('editor')
+    setIsSidePanelOpen(true)
   }
 
   const handleBackToDashboard = () => {
@@ -419,8 +422,13 @@ I am writing to express my interest in the .NET Developer position.`)
   if (!authUser && publicView === 'demo') {
     return (
       <div className="app-shell">
-        <div className="builder-layout">
-          <section className="editor-panel">
+        <div className={`builder-layout sliding-layout ${isSidePanelOpen ? 'panel-open' : 'panel-closed'}`}>
+          <div
+            className={`panel-backdrop ${isSidePanelOpen ? 'visible' : ''}`}
+            onClick={() => setIsSidePanelOpen(false)}
+            aria-hidden="true"
+          ></div>
+          <section className={`editor-panel sliding-panel ${isSidePanelOpen ? 'open' : 'closed'}`}>
             <div className="panel-intro">
               <div className="panel-topline">
                 <p className="eyebrow">Demo Resume</p>
@@ -526,6 +534,9 @@ I am writing to express my interest in the .NET Developer position.`)
                 <p className="preview-label">Live Preview</p>
                 <p className="preview-note">Same resume, public demo mode</p>
               </div>
+              <button className="drawer-toggle" onClick={() => setIsSidePanelOpen((prev) => !prev)} type="button">
+                {isSidePanelOpen ? 'Hide Panel' : 'Show Panel'}
+              </button>
               <div className="preview-modes" role="tablist" aria-label="Preview mode">
                 <button
                   className={`preview-mode-btn ${previewMode === 'desktop' ? 'active' : ''}`}
@@ -618,8 +629,13 @@ I am writing to express my interest in the .NET Developer position.`)
 
   return (
     <div className="app-shell">
-      <div className="builder-layout">
-        <section className="editor-panel">
+      <div className={`builder-layout sliding-layout ${isSidePanelOpen ? 'panel-open' : 'panel-closed'}`}>
+        <div
+          className={`panel-backdrop ${isSidePanelOpen ? 'visible' : ''}`}
+          onClick={() => setIsSidePanelOpen(false)}
+          aria-hidden="true"
+        ></div>
+        <section className={`editor-panel sliding-panel ${isSidePanelOpen ? 'open' : 'closed'}`}>
           <div className="panel-intro">
             <div className="panel-topline">
               <p className="eyebrow">Resume Builder</p>
@@ -742,6 +758,9 @@ I am writing to express my interest in the .NET Developer position.`)
               <p className="preview-label">Live Preview</p>
               <p className="preview-note">Styled to match `resumedemo.htm`</p>
             </div>
+            <button className="drawer-toggle" onClick={() => setIsSidePanelOpen((prev) => !prev)} type="button">
+              {isSidePanelOpen ? 'Hide Panel' : 'Show Panel'}
+            </button>
             <div className="preview-modes" role="tablist" aria-label="Preview mode">
               <button
                 className={`preview-mode-btn ${previewMode === 'desktop' ? 'active' : ''}`}
