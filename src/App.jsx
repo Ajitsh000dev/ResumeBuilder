@@ -71,6 +71,19 @@ const getFriendlyAuthError = (error) => {
   return error.message || 'Something went wrong while signing in.'
 }
 
+const getEmailLinks = ({ to, subject, body }) => {
+  const encodedTo = encodeURIComponent(to || '')
+  const encodedSubject = encodeURIComponent(subject || '')
+  const encodedBody = encodeURIComponent(body || '')
+
+  return {
+    gmailWeb: `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedTo}&su=${encodedSubject}&body=${encodedBody}`,
+    gmailIos: `googlegmail:///co?to=${encodedTo}&subject=${encodedSubject}&body=${encodedBody}`,
+    gmailAndroid: `intent://co?to=${encodedTo}&subject=${encodedSubject}&body=${encodedBody}#Intent;scheme=googlegmail;package=com.google.android.gm;end`,
+    mailto: `mailto:${encodedTo}?subject=${encodedSubject}&body=${encodedBody}`
+  }
+}
+
 function App() {
   const [publicView, setPublicView] = useState('welcome')
   const [resumeData, setResumeData] = useState(cloneResumeData())
@@ -186,6 +199,41 @@ I am writing to express my interest in the .NET Developer position.`)
       : `${emailBody}${attachmentReminder}`
   )
 
+  const openEmailClient = () => {
+    const body = getEmailBodyWithAttachmentReminder()
+    const links = getEmailLinks({
+      to: emailTo,
+      subject: emailSubject,
+      body
+    })
+
+    const userAgent = navigator.userAgent || navigator.vendor || ''
+    const isAndroid = /Android/i.test(userAgent)
+    const isIOS = /iPhone|iPad|iPod/i.test(userAgent)
+
+    if (isAndroid) {
+      window.location.href = links.gmailAndroid
+      window.setTimeout(() => {
+        if (!document.hidden) {
+          window.location.href = links.mailto
+        }
+      }, 900)
+      return
+    }
+
+    if (isIOS) {
+      window.location.href = links.gmailIos
+      window.setTimeout(() => {
+        if (!document.hidden) {
+          window.location.href = links.mailto
+        }
+      }, 900)
+      return
+    }
+
+    window.open(links.gmailWeb, '_blank', 'noopener,noreferrer')
+  }
+
   const handleCopyEmail = async () => {
     const toLine = emailTo ? `To: ${emailTo}\n` : ''
     const composedEmail = `${toLine}Subject: ${emailSubject}\n\n${getEmailBodyWithAttachmentReminder()}`
@@ -198,8 +246,7 @@ I am writing to express my interest in the .NET Developer position.`)
   }
 
   const handleOpenMail = () => {
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(emailTo)}&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(getEmailBodyWithAttachmentReminder())}`
-    window.open(gmailUrl, '_blank', 'noopener,noreferrer')
+    openEmailClient()
   }
 
   const handleDownloadPdfAndOpenMail = () => {
@@ -252,8 +299,7 @@ I am writing to express my interest in the .NET Developer position.`)
   }
 
   const handlePublicOpenMail = () => {
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(emailTo)}&su=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(getEmailBodyWithAttachmentReminder())}`
-    window.open(gmailUrl, '_blank', 'noopener,noreferrer')
+    openEmailClient()
   }
 
   const handlePublicDownloadPdfAndOpenMail = () => {
