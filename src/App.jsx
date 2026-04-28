@@ -278,7 +278,13 @@ I am writing to express my interest in the .NET Developer position.`)
       return
     }
 
-    window.open(links.gmailWeb, '_blank', 'noopener,noreferrer')
+    // Try Gmail web first, fallback to mailto
+    const gmailWindow = window.open(links.gmailWeb, '_blank', 'noopener,noreferrer')
+    
+    // If Gmail window didn't open (blocked or failed), use mailto protocol
+    if (!gmailWindow) {
+      window.location.href = links.mailto
+    }
   }
 
   const handleCopyEmail = async () => {
