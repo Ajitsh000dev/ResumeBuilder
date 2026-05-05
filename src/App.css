@@ -522,6 +522,46 @@
   gap: 18px;
 }
 
+.card-accordion {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+.card-accordion-summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(115, 123, 144, 0.05);
+  color: var(--color-text-primary);
+  font-weight: 700;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.card-accordion-summary::-webkit-details-marker {
+  display: none;
+}
+
+.card-accordion-body {
+  padding: 0;
+}
+
+.email-accordion .email-card {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.section-accordion .card-accordion-body {
+  padding: 0 0 18px;
+}
+
 .email-card {
   margin-bottom: 24px;
   padding: 22px;

@@ -32,47 +32,52 @@ function Skills({ data, onUpdate }) {
 
   return (
     <div className="section">
-      <h2>Skills</h2>
       {data.map((skill) => (
-        <div key={skill.id} className="entry">
-          <div className="form-group">
-            <label>Category</label>
-            <select
-              value={skill.category || 'Additional Skills'}
-              onChange={(e) => updateSkill(skill.id, 'category', e.target.value)}
-            >
-              {skillCategories.map((category) => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
+        <details key={skill.id} className="entry">
+          <summary className="entry-summary">
+            {skill.skill || 'New Skill'}
+            {skill.category ? ` • ${skill.category}` : ''}
+          </summary>
+          <div className="entry-content">
+            <div className="form-group">
+              <label>Category</label>
+              <select
+                value={skill.category || 'Additional Skills'}
+                onChange={(e) => updateSkill(skill.id, 'category', e.target.value)}
+              >
+                {skillCategories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Skill</label>
+              <input
+                type="text"
+                value={skill.skill}
+                onChange={(e) => updateSkill(skill.id, 'skill', e.target.value)}
+                placeholder="e.g., JavaScript, React, Python"
+              />
+            </div>
+            <div className="form-group">
+              <label>Proficiency Level</label>
+              <select
+                value={skill.proficiency}
+                onChange={(e) => updateSkill(skill.id, 'proficiency', e.target.value)}
+              >
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+                <option value="Expert">Expert</option>
+              </select>
+            </div>
+            <button onClick={() => removeSkill(skill.id)} className="btn-remove">
+              Remove
+            </button>
           </div>
-          <div className="form-group">
-            <label>Skill</label>
-            <input
-              type="text"
-              value={skill.skill}
-              onChange={(e) => updateSkill(skill.id, 'skill', e.target.value)}
-              placeholder="e.g., JavaScript, React, Python"
-            />
-          </div>
-          <div className="form-group">
-            <label>Proficiency Level</label>
-            <select
-              value={skill.proficiency}
-              onChange={(e) => updateSkill(skill.id, 'proficiency', e.target.value)}
-            >
-              <option value="Beginner">Beginner</option>
-              <option value="Intermediate">Intermediate</option>
-              <option value="Advanced">Advanced</option>
-              <option value="Expert">Expert</option>
-            </select>
-          </div>
-          <button onClick={() => removeSkill(skill.id)} className="btn-remove">
-            Remove
-          </button>
-        </div>
+        </details>
       ))}
       <button onClick={addSkill} className="btn-add">
         Add Skill

@@ -1,0 +1,361 @@
+.welcome-page {
+  min-height: 100vh;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: clamp(18px, 3vw, 32px);
+}
+
+.welcome-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 18px 24px;
+  margin-bottom: 30px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 24px;
+  box-shadow: 0 18px 60px rgba(15, 23, 42, 0.18);
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #38bdf8, #8b5cf6);
+  color: white;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.topbar-eyebrow {
+  margin: 0;
+  color: #7dd3fc;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.brand-name {
+  display: block;
+  color: var(--color-text-primary);
+  font-size: 1.05rem;
+}
+
+.topbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.topbar-nav a {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.topbar-nav a:hover,
+.topbar-nav a:focus {
+  color: #ffffff;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-btn,
+.icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary);
+  font-size: 1.15rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.icon-btn:hover,
+.icon-link:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-1px);
+}
+
+.welcome-login-btn {
+  min-width: 150px;
+  padding: 14px 20px;
+}
+
+.welcome-main {
+  display: grid;
+  gap: 32px;
+}
+
+.welcome-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 560px) minmax(0, 1fr);
+  gap: 28px;
+  align-items: stretch;
+}
+
+.hero-copy,
+.welcome-preview-card,
+.about-copy {
+  background: rgba(15, 23, 42, 0.94);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 28px;
+  box-shadow: 0 35px 120px rgba(15, 23, 42, 0.22);
+  backdrop-filter: blur(20px);
+}
+
+.hero-copy {
+  padding: 40px 38px 34px;
+}
+
+.welcome-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: rgba(56, 189, 248, 0.18);
+  color: #bae6fd;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+.hero-copy h1 {
+  margin: 0 0 20px;
+  color: var(--color-text-primary);
+  font-size: clamp(2.75rem, 4vw, 3.6rem);
+  line-height: 1.02;
+}
+
+.hero-copy p {
+  margin: 0 0 32px;
+  color: var(--color-text-secondary);
+  font-size: 1.05rem;
+  line-height: 1.85;
+  max-width: 680px;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.hero-grid div {
+  padding: 18px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.hero-grid strong {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--color-text-primary);
+}
+
+.hero-grid p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.96rem;
+  line-height: 1.7;
+}
+
+.welcome-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.welcome-preview-card {
+  padding: 22px;
+}
+
+.preview-window-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.preview-window-bar span {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  display: inline-block;
+  background: rgba(226, 232, 240, 0.35);
+}
+
+.preview-window-bar span:nth-child(1) {
+  background: #fb7185;
+}
+
+.preview-window-bar span:nth-child(2) {
+  background: #fbbf24;
+}
+
+.preview-window-bar span:nth-child(3) {
+  background: #34d399;
+}
+
+.welcome-features-section,
+.welcome-about {
+  display: grid;
+  gap: 20px;
+}
+
+.section-header {
+  display: grid;
+  gap: 8px;
+}
+
+.section-header .eyebrow {
+  color: #7dd3fc;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.section-header h2 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: clamp(2rem, 3vw, 2.4rem);
+  line-height: 1.1;
+}
+
+.feature-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.feature-card {
+  padding: 28px;
+  border-radius: 24px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.14);
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.12);
+}
+
+.feature-card h3 {
+  margin: 0 0 16px;
+  color: var(--color-text-primary);
+}
+
+.feature-card p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.78;
+}
+
+.about-copy {
+  padding: 36px 34px 32px;
+}
+
+.about-copy p {
+  margin: 0 0 28px;
+  color: var(--color-text-secondary);
+  line-height: 1.85;
+}
+
+.about-list {
+  display: grid;
+  gap: 14px;
+}
+
+.about-list div {
+  padding: 18px 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.about-list strong {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--color-text-primary);
+}
+
+.about-list p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  line-height: 1.75;
+}
+
+.welcome-error {
+  margin-top: 20px;
+  color: #fecaca;
+}
+
+@media (max-width: 1060px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .feature-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 860px) {
+  .welcome-hero,
+  .welcome-features-section,
+  .welcome-about {
+    grid-template-columns: 1fr;
+  }
+
+  .welcome-topbar {
+    padding: 16px 18px;
+  }
+}
+
+@media (max-width: 640px) {
+  .welcome-page {
+    padding: 16px;
+  }
+
+  .welcome-topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .topbar-nav {
+    justify-content: center;
+  }
+
+  .welcome-login-btn {
+    width: 100%;
+  }
+
+  .welcome-actions {
+    width: 100%;
+  }
+
+  .hero-copy {
+    padding: 28px 22px 24px;
+  }
+
+  .about-copy {
+    padding: 28px 22px 24px;
+  }
+}

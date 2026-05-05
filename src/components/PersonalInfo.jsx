@@ -12,7 +12,6 @@ function PersonalInfo({ data, onUpdate }) {
   return (
     <div className="card border-0 shadow-sm mb-4">
       <div className="card-body">
-        <h2 className="h5 mb-4">Personal Information</h2>
         <div className="row g-3">
           <div className="col-12 col-md-6">
             <label className="form-label">Full Name</label>

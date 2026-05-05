@@ -6,6 +6,8 @@ import Experience from './components/Experience'
 import Skills from './components/Skills'
 import Projects from './components/Projects'
 import ResumePreview from './components/ResumePreview'
+import Welcome from './components/Welcome'
+import Dashboard from './components/Dashboard'
 import PortfolioPage from './PortfolioPage'
 import { prebuiltResumeData } from './data/prebuiltData'
 import { downloadAsHTML, downloadAsPDF, printResume } from './utils/downloadUtils'
@@ -732,45 +734,13 @@ I am writing to express my interest in the ${resume.data?.personalInfo?.professi
 
   if (!authUser && publicView === 'welcome') {
     return (
-      <div className="public-shell">
-        <header className="public-header">
-          <div>
-            <p className="eyebrow">Resume Builder</p>
-            <h1 className="public-brand">Build, preview, and share polished resumes</h1>
-          </div>
-          <button className="auth-btn public-login-btn" onClick={handleGoogleSignIn} disabled={signingIn}>
-            {signingIn ? 'Signing In...' : 'Login'}
-          </button>
-        </header>
-
-        <section className="welcome-hero">
-          <div className="welcome-copy">
-            <p className="eyebrow">Public Access</p>
-            <h2>Explore a real working demo before you sign in</h2>
-            <p className="auth-copy">
-              Open a static demo resume with working download, print, and email tools. Sign in when you want your own saved resumes and editing access.
-            </p>
-            <div className="welcome-actions">
-              <button className="toolbar-btn dark" onClick={() => setPublicView('demo')}>
-                Open Demo Resume
-              </button>
-              <button className="signout-btn" onClick={handleGoogleSignIn} disabled={signingIn}>
-                {signingIn ? 'Signing In...' : 'Login to Edit'}
-              </button>
-            </div>
-            {authError ? <p className="auth-error">{authError}</p> : null}
-          </div>
-
-          <div className="welcome-preview-card">
-            <div className="preview-window-bar">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <ResumePreview data={publicResumeData} previewMode="desktop" />
-          </div>
-        </section>
-      </div>
+      <Welcome
+        publicResumeData={publicResumeData}
+        authError={authError}
+        signingIn={signingIn}
+        onDemoClick={() => setPublicView('demo')}
+        onLoginClick={handleGoogleSignIn}
+      />
     )
   }
 
@@ -932,58 +902,16 @@ I am writing to express my interest in the ${resume.data?.personalInfo?.professi
   if (currentView === 'dashboard') {
     return (
       <div className="app-shell">
-        <div className="dashboard-layout">
-          <section className="dashboard-panel">
-            <div className="panel-topline">
-              <div>
-                <p className="eyebrow">Secure Workspace</p>
-                <h1 className="dashboard-title">Your resumes</h1>
-              </div>
-              <button className="signout-btn" onClick={handleSignOut}>
-                Sign Out
-              </button>
-            </div>
-
-            <p className="intro-copy">
-              Signed in as <strong>{authUser.displayName || authUser.email}</strong>. Pick a resume to continue or start a new one.
-            </p>
-
-            <div className="dashboard-summary">
-              <div className="summary-card">
-                <span className="summary-label">Saved resumes</span>
-                <strong>{resumes.length}</strong>
-              </div>
-              <button className="toolbar-btn dark" onClick={handleCreateResume}>
-                Create New Resume
-              </button>
-            </div>
-
-            {dataError ? <p className="auth-error">{dataError}</p> : null}
-
-            {resumesLoading ? (
-              <div className="empty-state">
-                <h2>Loading resumes</h2>
-                <p>Pulling your saved resumes from Firebase.</p>
-              </div>
-            ) : resumes.length === 0 ? (
-              <div className="empty-state">
-                <h2>No resumes yet</h2>
-                <p>Your account is ready. Create the first resume and it will appear here after you save it.</p>
-              </div>
-            ) : (
-              <div className="resume-grid">
-                {resumes.map((resume) => (
-                  <button key={resume.id} className="resume-card" onClick={() => handleOpenResume(resume)}>
-                    <span className="resume-card-label">Resume</span>
-                    <h2>{resume.title || 'Untitled Resume'}</h2>
-                    <p>{resume.data?.personalInfo?.professionalTitle || 'Professional title not set'}</p>
-                    <span className="resume-card-date">Updated {formatResumeDate(resume.updatedAt)}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </section>
-        </div>
+        <Dashboard
+          authUser={authUser}
+          resumes={resumes}
+          resumesLoading={resumesLoading}
+          dataError={dataError}
+          onCreateResume={handleCreateResume}
+          onOpenResume={handleOpenResume}
+          onSignOut={handleSignOut}
+          formatResumeDate={formatResumeDate}
+        />
       </div>
     )
   }
@@ -1027,10 +955,6 @@ I am writing to express my interest in the ${resume.data?.personalInfo?.professi
                 </button>
               </div>
             </div>
-            <h1>Edit selected resume</h1>
-            <p className="intro-copy">
-              Opened from your Firebase workspace. Save changes any time to keep this resume synced to your account.
-            </p>
             <p className="session-note">
               Signed in as <strong>{authUser.displayName || authUser.email}</strong>
             </p>
@@ -1074,64 +998,96 @@ I am writing to express my interest in the ${resume.data?.personalInfo?.professi
             </button>
           </div>
 
-          <div className="email-card">
-            <div className="email-card-header">
-              <div>
-                <p className="eyebrow">Quick Email Sender</p>
-                <h2>Application message</h2>
+          <details className="card-accordion email-accordion">
+            <summary className="card-accordion-summary">Quick Email Sender</summary>
+            <div className="email-card">
+              <div className="email-card-header">
+                <div>
+                  <p className="eyebrow">Quick Email Sender</p>
+                  <h2>Application message</h2>
+                </div>
+                <p className="email-help">`To` is optional. Gmail will open with a reminder to attach the PDF.</p>
               </div>
-              <p className="email-help">`To` is optional. Gmail will open with a reminder to attach the PDF.</p>
-            </div>
 
-            <div className="form-group">
-              <label>To</label>
-              <input
-                type="email"
-                value={emailTo}
-                onChange={(e) => setEmailTo(e.target.value)}
-                placeholder="hr@company.com"
-              />
-            </div>
+              <div className="form-group">
+                <label>To</label>
+                <input
+                  type="email"
+                  value={emailTo}
+                  onChange={(e) => setEmailTo(e.target.value)}
+                  placeholder="hr@company.com"
+                />
+              </div>
 
-            <div className="form-group">
-              <label>Subject</label>
-              <input
-                type="text"
-                value={emailSubject}
-                onChange={(e) => setEmailSubject(e.target.value)}
-                placeholder="Application for .NET Developer Position"
-              />
-            </div>
+              <div className="form-group">
+                <label>Subject</label>
+                <input
+                  type="text"
+                  value={emailSubject}
+                  onChange={(e) => setEmailSubject(e.target.value)}
+                  placeholder="Application for .NET Developer Position"
+                />
+              </div>
 
-            <div className="form-group">
-              <label>Email Body</label>
-              <textarea
-                className="email-body"
-                value={emailBody}
-                onChange={(e) => setEmailBody(e.target.value)}
-                rows="8"
-              />
-            </div>
+              <div className="form-group">
+                <label>Email Body</label>
+                <textarea
+                  className="email-body"
+                  value={emailBody}
+                  onChange={(e) => setEmailBody(e.target.value)}
+                  rows="8"
+                />
+              </div>
 
-            <div className="email-actions">
-              <button className="toolbar-btn accent" onClick={handleCopyEmail}>
-                Copy Email
-              </button>
-              <button className="toolbar-btn success" onClick={handleOpenMail}>
-                Open Gmail
-              </button>
-              <button className="toolbar-btn dark" onClick={handleDownloadPdfAndOpenMail}>
-                Download PDF + Gmail
-              </button>
+              <div className="email-actions">
+                <button className="toolbar-btn accent" onClick={handleCopyEmail}>
+                  Copy Email
+                </button>
+                <button className="toolbar-btn success" onClick={handleOpenMail}>
+                  Open Gmail
+                </button>
+                <button className="toolbar-btn dark" onClick={handleDownloadPdfAndOpenMail}>
+                  Download PDF + Gmail
+                </button>
+              </div>
             </div>
-          </div>
+          </details>
 
           <div className="editor-sections">
-            <PersonalInfo data={resumeData.personalInfo} onUpdate={updatePersonalInfo} />
-            <Experience data={resumeData.experience} onUpdate={updateExperience} />
-            <Projects data={resumeData.projects || []} onUpdate={updateProjects} />
-            <Education data={resumeData.education} onUpdate={updateEducation} />
-            <Skills data={resumeData.skills} onUpdate={updateSkills} />
+            <details className="card-accordion section-accordion">
+              <summary className="card-accordion-summary">Personal Information</summary>
+              <div className="card-accordion-body">
+                <PersonalInfo data={resumeData.personalInfo} onUpdate={updatePersonalInfo} />
+              </div>
+            </details>
+
+            <details className="card-accordion section-accordion">
+              <summary className="card-accordion-summary">Experience</summary>
+              <div className="card-accordion-body">
+                <Experience data={resumeData.experience} onUpdate={updateExperience} />
+              </div>
+            </details>
+
+            <details className="card-accordion section-accordion">
+              <summary className="card-accordion-summary">Projects</summary>
+              <div className="card-accordion-body">
+                <Projects data={resumeData.projects || []} onUpdate={updateProjects} />
+              </div>
+            </details>
+
+            <details className="card-accordion section-accordion">
+              <summary className="card-accordion-summary">Education</summary>
+              <div className="card-accordion-body">
+                <Education data={resumeData.education} onUpdate={updateEducation} />
+              </div>
+            </details>
+
+            <details className="card-accordion section-accordion">
+              <summary className="card-accordion-summary">Skills</summary>
+              <div className="card-accordion-body">
+                <Skills data={resumeData.skills} onUpdate={updateSkills} />
+              </div>
+            </details>
           </div>
         </section>
 
